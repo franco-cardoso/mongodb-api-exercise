@@ -10,7 +10,7 @@ const createUser = (userData: UserType): Promise<{ message: string; status: numb
             User.findOne({ email: userData.email }, (err: CallbackError, user: UserType | undefined) => {
                 if (err) throw err;
                 if (user) {
-                    rej({
+                    return rej({
                         status: 404,
                         message: "Este correo ya se encuentra en uso",
                     });

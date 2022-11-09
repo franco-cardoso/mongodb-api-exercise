@@ -10,7 +10,10 @@ const signUpUser = (req: Request, res: Response) => {
     if (!isInvalid.isEmpty()) {
         return res.status(400).send(isInvalid);
     }
-    userService.createUser(req.body).then((response) => res.send(response));
+    userService
+        .createUser(req.body)
+        .then((result) => res.status(result.status).send(result))
+        .catch((rejected) => res.status(rejected.status).send(rejected));
 };
 
 export default { loginUser, signUpUser };
