@@ -7,24 +7,29 @@ const createUser = (userData: UserType): Promise<{ message: string; status: numb
     return new Promise((res, rej) => {
         try {
             const newUser = new User(userData);
-            User.findOne({ email: userData.email }, (err: CallbackError, user: UserType | undefined) => {
-                if (err) throw err;
-                if (user) {
-                    return rej({
-                        status: 400,
-                        message: "Este correo ya se encuentra en uso",
+            User.findOne(
+                // operador $or de mongoose para encontrar un usuario con el nombre o el email
+                { $or: [{ email: userData.email }, { username: userData.username }] },
+                (err: CallbackError, user: UserType | undefined) => {
+                    if (err) throw err;
+                    if (user) {
+                        return rej({
+                            message: "Este correo ya se encuentra en uso",
+                            at: "email",
+                            status: 400,
+                        });
+                    }
+
+                    newUser.save((err) => {
+                        if (err) throw err;
+                        res({
+                            message: "Usuario creado con éxito",
+                            token: authService.createToken(userData),
+                            status: 200,
+                        });
                     });
                 }
-
-                newUser.save((err) => {
-                    if (err) throw err;
-                    res({
-                        status: 200,
-                        message: "Usuario creado con éxito",
-                        token: authService.createToken(userData),
-                    });
-                });
-            });
+            );
         } catch (err) {
             rej({ status: 500, message: "Ocurrió un error al crear el usuario" });
         }
