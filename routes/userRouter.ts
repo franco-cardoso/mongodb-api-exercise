@@ -1,5 +1,10 @@
 import express from "express";
+import { userSchema } from "../controllers/schemas";
+import { userControllers } from "../controllers";
 
 const userRouter = express.Router();
 
-export { userRouter };
+userRouter.post("/login");
+userRouter.post("/register", userSchema, userControllers.registerUser);
+
+export default userRouter;
