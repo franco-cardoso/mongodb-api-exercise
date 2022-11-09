@@ -1,6 +1,5 @@
-import User from "../models/User";
 import { Request, Response } from "express";
-import { validationResult, Result } from "express-validator";
+import { validationResult } from "express-validator";
 import { userService } from "../services";
 
 // formato customizado para la validacion de express-validator

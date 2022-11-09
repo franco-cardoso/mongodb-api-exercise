@@ -16,8 +16,8 @@ export default [
         .exists()
         .notEmpty()
         .withMessage("Debes ingresar un correo")
-        .isEmail()
         .normalizeEmail({ all_lowercase: true })
+        .isEmail()
         .withMessage("El email ingresado es inválido")
         
         ,
@@ -27,5 +27,5 @@ export default [
         .notEmpty()
         .withMessage("Debes ingresar una contraseña")
         .isStrongPassword({minSymbols:0})
-        .withMessage("Contraseña inválida"),
+        .withMessage("La contraseña debe tener al menos una letra mayúscula, una minúscula, y un número"),
 ];

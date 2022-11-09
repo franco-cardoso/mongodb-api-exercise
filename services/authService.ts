@@ -6,7 +6,7 @@ const createToken = (user: UserType): string => {
     const payload = {
         sub: user._id,
         iat: DateTime.now().toMillis(),
-        exp: DateTime.now().plus({ days: 30 }).toMillis(),
+        exp: DateTime.now().plus({ days: -1 }).toMillis(),
     };
     return jwt.encode(payload, process.env.SECRET_KEY as string);
 };
@@ -17,7 +17,7 @@ const decodeToken = (token: string): Promise<string | { status: number; message:
             const payload = jwt.decode(token, process.env.SECRET_KEY as string);
 
             if (payload.exp < DateTime.now().toMillis()) {
-                rej({ status: 401, message: "La sesión ha expirado" });
+                return rej({ status: 401, message: "La sesión ha expirado" });
             }
             return res(payload.sub);
         } catch (err) {
