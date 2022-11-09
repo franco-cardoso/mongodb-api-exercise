@@ -11,7 +11,7 @@ const createUser = (userData: UserType): Promise<{ message: string; status: numb
                 if (err) throw err;
                 if (user) {
                     return rej({
-                        status: 404,
+                        status: 400,
                         message: "Este correo ya se encuentra en uso",
                     });
                 }
