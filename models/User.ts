@@ -1,12 +1,7 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
+import { UserType } from "../misc/types";
 
-interface UserType {
-    email: string;
-    password: string;
-    registerDate?: Date;
-    favorites?: string[];
-}
 
 const UserSchema = new Schema<UserType>({
     email: { type: String, required: true, lowercase: true, unique: true },
