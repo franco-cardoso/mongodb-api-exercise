@@ -6,7 +6,7 @@ const createToken = (user: UserType): string => {
     const payload = {
         sub: user._id,
         iat: DateTime.now().toMillis(),
-        exp: DateTime.now().plus({ days: -1 }).toMillis(),
+        exp: DateTime.now().plus({ days: 30 }).toMillis(),
     };
     return jwt.encode(payload, process.env.SECRET_KEY as string);
 };
