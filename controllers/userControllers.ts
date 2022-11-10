@@ -1,16 +1,8 @@
 import { Request, Response } from "express";
 import { Result, validationResult } from "express-validator";
+import { validationFormatter } from ".";
 import { userService } from "../services";
 
-// formato customizado para la validacion de express-validator
-const validationFormat = validationResult.withDefaults({
-    formatter: (error) => {
-        return {
-            message: error.msg,
-            at: error.param,
-        };
-    },
-});
 
 const loginUser = (req: Request, res: Response) => {
     userService
@@ -20,7 +12,7 @@ const loginUser = (req: Request, res: Response) => {
 };
 
 const signUpUser = (req: Request, res: Response) => {
-    const isInvalid: Object[] = validationFormat(req).array();
+    const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) {
         return res.status(400).send(isInvalid);
     }

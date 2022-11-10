@@ -6,9 +6,9 @@ const ShowSchema = new Schema<ShowType>(
         title: { type: String, required: true },
         description: { type: String, required: true },
         coverPic: { type: String, required: true },
-        category: { type: String, required: true },
         type: { type: String, required: true },
-        episodes: { type: [Types.ObjectId], required: true },
+        category: { type: String, required: true },
+        episodes: { type: [Types.ObjectId], required: true, default: [] },
     },
     { collection: "shows" }
 );

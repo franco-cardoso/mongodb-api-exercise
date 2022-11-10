@@ -14,8 +14,8 @@ interface ShowType {
     title: string,
     description: string,
     coverPic: string,
-    category: string,
     type: string,
+    category: string,
     episodes: ObjectId[],
 }
 

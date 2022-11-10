@@ -12,7 +12,7 @@ const getShows = (): Promise<{ message: string; status: number; shows?: ShowType
                     res({ message: "", status: 200, shows: shows });
                 });
         } catch (err) {
-            rej({ message: "Error al recibir los datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500 });
         }
     });
 };
@@ -26,7 +26,7 @@ const getShowByID = (id: string): Promise<{ message: string; status: number; sho
                 res({ message: "", status: 200, show: show });
             });
         } catch (err) {
-            rej({ message: "Error al recibir los datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500 });
         }
     });
 };
@@ -40,9 +40,24 @@ const removeShowByID = (id: string): Promise<{ message: string; status: number }
                 res({ message: "Show eliminado con éxito", status: 200 });
             });
         } catch (err) {
-            rej({ message: "Error al eliminar el show", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500 });
         }
     });
 };
 
-export default { getShows, getShowByID, removeShowByID };
+const editShow = (id: string, data: ShowType): Promise<{ message: string; status: number }> => {
+    return new Promise((res, rej) => {
+        try {
+            Show.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, show) => {
+                if (err) throw err;
+                if (!show) rej({ message: "Este show no existe", status: 404 });
+
+                res({ message: "Show editado con exito", status: 200 });
+            });
+        } catch (err) {
+            rej({ message: "Error al consultar la base de datos", status: 500 });
+        }
+    });
+};
+
+export default { editShow, getShows, getShowByID, removeShowByID };

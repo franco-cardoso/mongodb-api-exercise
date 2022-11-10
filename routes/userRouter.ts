@@ -1,6 +1,6 @@
 import express from "express";
-import { userSchema } from "../controllers/schemas";
 import { userControllers } from "../controllers";
+import userSchema from "../controllers/schemas/userSchema";
 import { userMiddleware } from "../middleware";
 
 const userRouter = express.Router();
