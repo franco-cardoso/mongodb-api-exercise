@@ -6,7 +6,17 @@ interface UserType {
     email: string;
     password: string;
     registerDate?: Date;
-    favorites?: string[];
+    favorites: string[];
 }
 
-export { UserType };
+interface ShowType {
+    _id?: ObjectId;
+    title: string,
+    description: string,
+    coverPic: string,
+    category: string,
+    type: string,
+    episodes: ObjectId[],
+}
+
+export { UserType, ShowType };

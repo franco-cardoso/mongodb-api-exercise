@@ -9,7 +9,7 @@ const UserSchema = new Schema<UserType>(
         username: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         registerDate: { type: Date, required: true, default: DateTime.now() },
-        favorites: { type: [String], required: false },
+        favorites: { type: [String], required: false, default: [] },
     },
     { collection: "users" }
 );
