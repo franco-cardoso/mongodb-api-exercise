@@ -10,7 +10,7 @@ const ShowSchema = new Schema<ShowType>(
         type: { type: String, required: true },
         episodes: { type: [Types.ObjectId], required: true },
     },
-    { collection: "Shows" }
+    { collection: "shows" }
 );
 
 export default model("Show", ShowSchema);

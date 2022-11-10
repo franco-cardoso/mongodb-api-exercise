@@ -4,7 +4,7 @@ import showsRouter from "./showsRouter";
 
 const router = express.Router();
 
-router.use("/users",userRouter)
-router.use("/shows",showsRouter)
+router.use("/users", userRouter);
+router.use("/shows", showsRouter);
 
 export default router;
