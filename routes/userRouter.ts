@@ -5,7 +5,7 @@ import { userMiddleware } from "../middleware";
 
 const userRouter = express.Router();
 
-userRouter.post("/login");
+userRouter.post("/login", userMiddleware.handleLoginCredentials, userControllers.loginUser);
 userRouter.post("/register", userSchema, userControllers.signUpUser);
 
 export default userRouter;

@@ -1,3 +1,4 @@
+import { compareSync } from "bcrypt";
 import { CallbackError } from "mongoose";
 import { UserType } from "../misc/types";
 import User from "../models/User";
@@ -36,4 +37,39 @@ const createUser = (userData: UserType): Promise<{ message: string; status: numb
     });
 };
 
-export default { createUser };
+const attemptLogin = (credentials: {
+    email?: string;
+    username?: string;
+    password: string;
+}): Promise<{ message: string; status: number; token?: string }> => {
+
+    const { password } = credentials;
+
+    return new Promise((res, rej) => {
+        // prettier-ignore
+        try{
+            User.findOne(
+                {
+                    [Object.keys(credentials)[0]]: Object.values(credentials)[0],  // usa la primera propiedad de 'credentials' sin saber
+                },                                                                 // su nombre, ya que podria ser 'email' o 'username'
+            (err: CallbackError, user: UserType) => {
+                if (err) {
+                    rej({ message: "Ocurrió un error al intentar iniciar sesión", status: 500 });
+                }
+                if (!user) {
+                    rej({ message: "Datos incorrectos", status: 400 });
+                }
+                if (!compareSync(password, user.password)) {
+                    rej({ message: "Datos incorrectos", status: 400 });
+                }
+                
+                res({ message: "Iniciado sesión con exito", status: 200, token: authService.createToken(user) });
+            }
+            );
+        } catch (err) {
+            rej({message:"Ocurrió un error al iniciar sesión",status:500})
+        }
+    });
+};
+
+export default { createUser, attemptLogin };

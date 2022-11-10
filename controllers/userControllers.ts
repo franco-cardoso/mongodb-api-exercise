@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { validationResult } from "express-validator";
+import { Result, validationResult } from "express-validator";
 import { userService } from "../services";
 
 // formato customizado para la validacion de express-validator
@@ -12,11 +12,16 @@ const validationFormat = validationResult.withDefaults({
     },
 });
 
-const loginUser = (req: Request, res: Response) => {};
+const loginUser = (req: Request, res: Response) => {
+    userService
+        .attemptLogin(req.body)
+        .then((result) => res.status(result.status).send(result))
+        .catch((rejected) => res.status(rejected.status).send(rejected));
+};
 
 const signUpUser = (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormat(req).array();
-    if (isInvalid.length) {
+    if (isInvalid.length > 0) {
         return res.status(400).send(isInvalid);
     }
 
@@ -25,7 +30,5 @@ const signUpUser = (req: Request, res: Response) => {
         .then((result) => res.status(result.status).send(result))
         .catch((rejected) => res.status(rejected.status).send(rejected));
 };
-
-
 
 export default { loginUser, signUpUser };

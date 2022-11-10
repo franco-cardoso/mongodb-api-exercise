@@ -17,4 +17,21 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-export default { isAuth };
+const handleLoginCredentials = (req: Request, res: Response, next: NextFunction) => {
+    const { userHandle, password } = req.body;
+    if (!userHandle) {
+        return res.status(400).send({ message: "Debes ingresar tu nombre de usuario o correo", status: 400 });
+    }
+    if (!password) {
+        return res.status(400).send({ message: "Debes ingresar tu contraseña", status: 400 });
+    }
+
+    const typeOfHandle = userHandle.includes("@") ? "email" : "username";
+    req.body = {
+        [typeOfHandle]: userHandle,
+        password: password,
+    };
+    next();
+};
+
+export default { isAuth, handleLoginCredentials };
