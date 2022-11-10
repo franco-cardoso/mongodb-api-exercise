@@ -21,7 +21,7 @@ const loginUser = (req: Request, res: Response) => {
 
 const signUpUser = (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormat(req).array();
-    if (isInvalid.length > 0) {
+    if (isInvalid[0]) {
         return res.status(400).send(isInvalid);
     }
 
