@@ -31,4 +31,18 @@ const getShowByID = (id: string): Promise<{ message: string; status: number; sho
     });
 };
 
-export default { getShows, getShowByID };
+const removeShowByID = (id: string): Promise<{ message: string; status: number }> => {
+    return new Promise((res, rej) => {
+        try {
+            Show.findByIdAndDelete(id, {}, (err: CallbackError, show) => {
+                if (err) throw err;
+                if (!show) rej({ message: "Este show no existe", status: 404 });
+                res({ message: "Show eliminado con éxito", status: 200 });
+            });
+        } catch (err) {
+            rej({ message: "Error al eliminar el show", status: 500 });
+        }
+    });
+};
+
+export default { getShows, getShowByID, removeShowByID };

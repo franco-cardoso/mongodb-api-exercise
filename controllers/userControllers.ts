@@ -16,7 +16,7 @@ const loginUser = (req: Request, res: Response) => {
     userService
         .attemptLogin(req.body)
         .then((result) => res.status(result.status).send(result))
-        .catch((rejected) => res.status(rejected.status).send(rejected));
+        .catch((rej) => res.status(rej.status).send(rej));
 };
 
 const signUpUser = (req: Request, res: Response) => {
@@ -28,7 +28,8 @@ const signUpUser = (req: Request, res: Response) => {
     userService
         .createUser(req.body)
         .then((result) => res.status(result.status).send(result))
-        .catch((rejected) => res.status(rejected.status).send(rejected));
+        .catch((rej) => res.status(rej.status).send(rej));
 };
+
 
 export default { loginUser, signUpUser };
