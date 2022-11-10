@@ -13,7 +13,7 @@ interface ShowType {
     _id?: ObjectId;
     title: string,
     description: string,
-    coverPic: string,
+    coverImg: string,
     type: string,
     category: string,
     episodes: ObjectId[],

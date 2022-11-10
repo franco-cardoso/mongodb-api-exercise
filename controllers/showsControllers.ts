@@ -34,4 +34,14 @@ const editShow = (req: Request, res: Response) => {
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-export default { getAllShows, getShow, removeShow, editShow };
+const addShow = (req: Request, res: Response) => {
+    const isInvalid: Object[] = validationFormatter(req).array();
+    if (isInvalid[0]) {
+        return res.status(400).send(isInvalid);
+    }
+    showsService
+        .createShow(req.body)
+        .then((result) => res.status(result.status).send(result))
+        .catch((rej) => res.status(rej.status).send(rej));
+};
+export default { addShow, getAllShows, getShow, removeShow, editShow };

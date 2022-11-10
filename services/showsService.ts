@@ -60,4 +60,22 @@ const editShow = (id: string, data: ShowType): Promise<{ message: string; status
     });
 };
 
-export default { editShow, getShows, getShowByID, removeShowByID };
+const createShow = (data: ShowType): Promise<{ message: string; status: number }> => {
+    return new Promise((res, rej) => {
+        try {
+            Show.findOne({ title: data.title }, (err: CallbackError, show: ShowType) => {
+                if (err) throw err;
+                if (show) return rej({ message: "Ya existe un show con este título", status: 409 });
+                const newShow = new Show(data);
+                newShow.save((err) => {
+                    if (err) throw err;
+                    res({ message: "Show creado con exito", status: 200 });
+                });
+            });
+        } catch (err) {
+            rej({ message: "Error al consultar la base de datos", status: 500 });
+        }
+    });
+};
+
+export default { editShow, createShow, getShows, getShowByID, removeShowByID };
