@@ -1,4 +1,4 @@
-import { CallbackError } from "mongoose";
+import { CallbackError, ObjectId } from "mongoose";
 import { ShowType } from "../misc/types";
 import Show from "../models/Show";
 
@@ -60,16 +60,16 @@ const editShow = (id: string, data: ShowType): Promise<{ message: string; status
     });
 };
 
-const createShow = (data: ShowType): Promise<{ message: string; status: number }> => {
+const createShow = (data: ShowType): Promise<{ message: string; id?: ObjectId; status: number }> => {
     return new Promise((res, rej) => {
         try {
             Show.findOne({ title: data.title }, (err: CallbackError, show: ShowType) => {
                 if (err) throw err;
                 if (show) return rej({ message: "Ya existe un show con este título", status: 409 });
                 const newShow = new Show(data);
-                newShow.save((err) => {
+                newShow.save((err, show) => {
                     if (err) throw err;
-                    res({ message: "Show creado con exito", status: 200 });
+                    res({ message: "Show creado con exito", id: show._id, status: 201 });
                 });
             });
         } catch (err) {

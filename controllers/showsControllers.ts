@@ -41,7 +41,12 @@ const addShow = (req: Request, res: Response) => {
     }
     showsService
         .createShow(req.body)
-        .then((result) => res.status(result.status).send(result))
+        .then((result) =>
+            res
+                .status(result.status)
+                .header({ Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${result.id}` })
+                .send(result)
+        )
         .catch((rej) => res.status(rej.status).send(rej));
 };
 export default { addShow, getAllShows, getShow, removeShow, editShow };

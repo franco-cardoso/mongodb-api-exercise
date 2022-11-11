@@ -1,8 +1,7 @@
 require("dotenv").config();
-import mongoose, { CallbackError, ObjectId, Types } from "mongoose";
+import mongoose, { CallbackError } from "mongoose";
 import express from "express";
 import router from "./routes/router";
-import User from "./models/User";
 
 const app = express();
 app.use(express.json());
