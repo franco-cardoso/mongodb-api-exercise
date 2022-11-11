@@ -49,10 +49,8 @@ const attemptLogin = (credentials: {
         // prettier-ignore
         try{
             User.findOne(
-                {
-                    [Object.keys(credentials)[0]]: Object.values(credentials)[0],  // usa la primera propiedad de 'credentials' sin saber
-                },                                                                 // su nombre, ya que podria ser 'email' o 'username'
-            (err: CallbackError, user: UserType) => {
+            {[Object.keys(credentials)[0]]: Object.values(credentials)[0]},  // usa la primera propiedad de 'credentials' sin saber                                         
+            (err: CallbackError, user: UserType) => {                         // su nombre, ya que podria ser 'email' o 'username'
                 if (err) {
                     rej({ message: "Ocurrió un error al intentar iniciar sesión", status: 500 });
                 }
