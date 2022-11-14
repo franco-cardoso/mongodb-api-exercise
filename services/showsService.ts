@@ -3,7 +3,6 @@ import { EpisodeType, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
 
-
 // -----
 // SHOWS
 // -----
@@ -52,9 +51,13 @@ const removeShowByID = (id: string): Promise<{ message: string; status: number }
 };
 
 const editShow = (id: string, data: ShowType): Promise<{ message: string; status: number }> => {
+    Object.keys(data).forEach((key) => {
+        if (data[key] === "") delete data[key];
+    });
+
     return new Promise((res, rej) => {
         try {
-            Show.findOneAndUpdate({ _id: id }, { /* $set: data, */ $push: { episodes: data.episodes } }, {}, (err: CallbackError, show) => {
+            Show.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, show) => {
                 if (err) throw err;
                 if (!show) rej({ message: "Este show no existe", status: 404 });
 
@@ -66,7 +69,7 @@ const editShow = (id: string, data: ShowType): Promise<{ message: string; status
     });
 };
 
-const createShow = (data: ShowType): Promise<{ message: string; id?: ObjectId; status: number }> => {
+const createShow = (data: ShowType): Promise<{ message: string; id?: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
             Show.findOne({ title: data.title }, (err: CallbackError, show: ShowType) => {

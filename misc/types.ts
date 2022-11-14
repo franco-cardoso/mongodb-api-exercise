@@ -10,13 +10,14 @@ interface UserType {
 }
 
 interface ShowType {
-    _id?: ObjectId;
+    [key: string]: string | string[] | undefined;
+    _id?: string;
     title: string;
     description: string;
     coverImg: string;
     type: string;
     category: string;
-    episodes: ObjectId[];
+    episodes: string[];
 }
 
 interface EpisodeType {
