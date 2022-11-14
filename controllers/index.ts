@@ -14,6 +14,7 @@ const validationFormatter = validationResult.withDefaults({
         return {
             message: error.msg,
             at: error.param,
+            status: 400
         };
     },
 });

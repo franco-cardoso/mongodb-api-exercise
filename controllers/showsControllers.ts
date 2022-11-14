@@ -29,9 +29,8 @@ const removeShow = (req: Request, res: Response) => {
 
 const editShow = (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
-    if (isInvalid[0]) {
-        return res.status(400).send(isInvalid);
-    }
+    if (isInvalid[0]) return res.status(400).send(isInvalid);
+
     showsService
         .editShow(req.params.id, req.body)
         .then((result) => res.status(result.status).send(result))
@@ -40,9 +39,8 @@ const editShow = (req: Request, res: Response) => {
 
 const addShow = (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
-    if (isInvalid[0]) {
-        return res.status(400).send(isInvalid);
-    }
+    if (isInvalid[0]) return res.status(400).send(isInvalid);
+
     showsService
         .createShow(req.body)
         .then((result) =>
@@ -59,6 +57,9 @@ const addShow = (req: Request, res: Response) => {
 // --------
 
 const addEpisode = (req: Request, res: Response) => {
+    const isInvalid: Object[] = validationFormatter(req).array();
+    if (isInvalid[0]) return res.status(400).send(isInvalid);
+
     showsService
         .createNewEpisode(req.body, req.params.id)
         .then((result) => res.status(result.status).send(result))
