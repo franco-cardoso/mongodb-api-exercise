@@ -109,4 +109,23 @@ const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ mess
     });
 };
 
-export default { editShow, createShow, getShows, getShowByID, removeShowByID, createNewEpisode };
+const editEpisode = (id: string, data: ShowType): Promise<{ message: string; status: number }> => {
+    Object.keys(data).forEach((key) => {
+        if (data[key] === "") delete data[key];
+    });
+
+    return new Promise((res, rej) => {
+        try {
+            Episode.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, show) => {
+                if (err) throw err;
+                if (!show) rej({ message: "Este show no existe", status: 404 });
+
+                res({ message: "Show editado con exito", status: 200 });
+            });
+        } catch (err) {
+            rej({ message: "Error al consultar la base de datos", status: 500 });
+        }
+    });
+};
+
+export default { editShow, createShow, getShows, getShowByID, removeShowByID, createNewEpisode, editEpisode };

@@ -66,4 +66,14 @@ const addEpisode = (req: Request, res: Response) => {
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-export default { addShow, getAllShows, getShow, removeShow, editShow, addEpisode };
+const editEpisode = (req: Request, res: Response) => {
+    const isInvalid: Object[] = validationFormatter(req).array();
+    if (isInvalid[0]) return res.status(400).send(isInvalid);
+    
+    showsService
+        .editEpisode(req.params.epId, req.body)
+        .then((result) => res.status(result.status).send(result))
+        .catch((rej) => res.status(rej.status).send(rej));
+};
+
+export default { addShow, getAllShows, getShow, removeShow, editShow, addEpisode, editEpisode };

@@ -15,5 +15,6 @@ showsRouter.post("/", showSchema, showsControllers.addShow);
 
 //      EPISODES
 showsRouter.post("/:id", episodeSchema, showsControllers.addEpisode);
+showsRouter.put("/:id/:epId", episodeSchema, showsControllers.editEpisode);
 
 export default showsRouter;
