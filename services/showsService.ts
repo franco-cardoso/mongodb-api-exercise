@@ -1,16 +1,20 @@
 import { CallbackError, ObjectId } from "mongoose";
+import { ParsedUrlQuery } from "querystring";
 import { EpisodeType, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
-
 // -----
 // SHOWS
 // -----
 
-const getShows = (): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
+const getShows = (search: string | undefined): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
+    console.log(search)
+    const searchQuery = search ? new RegExp(search, "i") : null;
+    console.log(searchQuery)
+
     return new Promise((res, rej) => {
         try {
-            Show.find({})
+            Show.find(searchQuery ? { "title": { $regex: searchQuery } } : {})
                 .select({ title: 1, description: 1, coverPic: 1 })
                 .exec((err: CallbackError, shows: ShowType[]) => {
                     if (err) throw err;

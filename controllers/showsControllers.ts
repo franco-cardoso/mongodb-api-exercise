@@ -8,7 +8,7 @@ import { showsService } from "../services";
 
 const getAllShows = (req: Request, res: Response) => {
     showsService
-        .getShows()
+        .getShows(req.query.search as string)
         .then((result) => res.status(result.status).json(result.shows))
         .catch((rej) => res.status(rej.status).send(rej));
 };
