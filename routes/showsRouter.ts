@@ -1,14 +1,18 @@
 import express from "express";
 import { showsControllers } from "../controllers";
+import showSchemaPUT from "../controllers/schemas/showSchemaPUT";
 import showSchema from "../controllers/schemas/showSchema";
-import showSchemaPOST from "../controllers/schemas/showSchemaPOST";
 
 const showsRouter = express.Router();
 
+//      SHOWS
 showsRouter.get("/", showsControllers.getAllShows);
 showsRouter.get("/:id", showsControllers.getShow);
 showsRouter.delete("/:id", showsControllers.removeShow);
-showsRouter.put("/:id", showSchema, showsControllers.editShow);
-showsRouter.post("/", showSchemaPOST, showsControllers.addShow);
+showsRouter.put("/:id", showSchemaPUT, showsControllers.editShow);
+showsRouter.post("/", showSchema, showsControllers.addShow);
+
+//      EPISODES
+showsRouter.post("/:id", showsControllers.addEpisode);
 
 export default showsRouter;

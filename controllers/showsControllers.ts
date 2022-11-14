@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import { validationFormatter } from ".";
 import { showsService } from "../services";
 
+// -----
+// SHOWS
+// -----
+
 const getAllShows = (req: Request, res: Response) => {
     showsService
         .getShows()
@@ -49,4 +53,16 @@ const addShow = (req: Request, res: Response) => {
         )
         .catch((rej) => res.status(rej.status).send(rej));
 };
-export default { addShow, getAllShows, getShow, removeShow, editShow };
+
+// --------
+// EPISODES
+// --------
+
+const addEpisode = (req: Request, res: Response) => {
+    showsService
+        .createNewEpisode(req.body, req.params.id)
+        .then((result) => res.status(result.status).send(result))
+        .catch((rej) => res.status(rej.status).send(rej));
+};
+
+export default { addShow, getAllShows, getShow, removeShow, editShow, addEpisode };

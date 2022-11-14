@@ -11,12 +11,19 @@ interface UserType {
 
 interface ShowType {
     _id?: ObjectId;
-    title: string,
-    description: string,
-    coverImg: string,
-    type: string,
-    category: string,
-    episodes: ObjectId[],
+    title: string;
+    description: string;
+    coverImg: string;
+    type: string;
+    category: string;
+    episodes: ObjectId[];
 }
 
-export { UserType, ShowType };
+interface EpisodeType {
+    _id?: ObjectId;
+    title: string;
+    description: string;
+    url: string;
+}
+
+export { EpisodeType, UserType, ShowType };

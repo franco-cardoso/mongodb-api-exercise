@@ -1,6 +1,12 @@
 import { CallbackError, ObjectId } from "mongoose";
-import { ShowType } from "../misc/types";
+import { EpisodeType, ShowType } from "../misc/types";
+import Episode from "../models/Episode";
 import Show from "../models/Show";
+
+
+// -----
+// SHOWS
+// -----
 
 const getShows = (): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
     return new Promise((res, rej) => {
@@ -48,7 +54,7 @@ const removeShowByID = (id: string): Promise<{ message: string; status: number }
 const editShow = (id: string, data: ShowType): Promise<{ message: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
-            Show.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, show) => {
+            Show.findOneAndUpdate({ _id: id }, { /* $set: data, */ $push: { episodes: data.episodes } }, {}, (err: CallbackError, show) => {
                 if (err) throw err;
                 if (!show) rej({ message: "Este show no existe", status: 404 });
 
@@ -78,4 +84,26 @@ const createShow = (data: ShowType): Promise<{ message: string; id?: ObjectId; s
     });
 };
 
-export default { editShow, createShow, getShows, getShowByID, removeShowByID };
+// --------
+// EPISODES
+// --------
+
+const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ message: string; status: number }> => {
+    return new Promise((res, rej) => {
+        try {
+            const newEpisode = new Episode(data);
+            newEpisode.save((err, episode: EpisodeType) => {
+                if (err) throw err;
+                Show.findOneAndUpdate({ _id: targetShow }, { $push: { episodes: episode._id } }, {}, (err, show) => {
+                    if (err) throw err;
+                    if (!show) rej({ message: "Este show no existe", status: 404 });
+                    res({ message: "Episodio añadido con éxito", status: 201 });
+                });
+            });
+        } catch (err) {
+            rej({ message: "Error al consultar la base de datos", status: 500 });
+        }
+    });
+};
+
+export default { editShow, createShow, getShows, getShowByID, removeShowByID, createNewEpisode };
