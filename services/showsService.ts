@@ -8,9 +8,7 @@ import Show from "../models/Show";
 // -----
 
 const getShows = (search: string | undefined): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
-    console.log(search)
     const searchQuery = search ? new RegExp(search, "i") : null;
-    console.log(searchQuery)
 
     return new Promise((res, rej) => {
         try {
