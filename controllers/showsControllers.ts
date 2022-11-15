@@ -76,4 +76,11 @@ const editEpisode = (req: Request, res: Response) => {
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-export default { addShow, getAllShows, getShow, removeShow, editShow, addEpisode, editEpisode };
+const removeEpisode = (req: Request, res: Response) => {
+    showsService
+        .removeEpisodeByID(req.params.epId)
+        .then((result) => res.send(result))
+        .catch((rej) => res.status(rej.status).send(rej));
+};
+
+export default { addShow, getAllShows, getShow, removeShow, editShow, addEpisode, editEpisode, removeEpisode };

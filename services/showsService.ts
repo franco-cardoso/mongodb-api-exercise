@@ -1,5 +1,4 @@
-import { CallbackError, ObjectId } from "mongoose";
-import { ParsedUrlQuery } from "querystring";
+import { CallbackError } from "mongoose";
 import { EpisodeType, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
@@ -8,11 +7,11 @@ import Show from "../models/Show";
 // -----
 
 const getShows = (search: string | undefined): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
-    const searchQuery = search ? new RegExp(search, "i") : null;
+    const searchQuery: RegExp | null = search ? new RegExp(search, "i") : null;
 
     return new Promise((res, rej) => {
         try {
-            Show.find(searchQuery ? { "title": { $regex: searchQuery } } : {})
+            Show.find(searchQuery ? { title: { $regex: searchQuery } } : {})
                 .select({ title: 1, description: 1, coverPic: 1 })
                 .exec((err: CallbackError, shows: ShowType[]) => {
                     if (err) throw err;
@@ -118,11 +117,11 @@ const editEpisode = (id: string, data: ShowType): Promise<{ message: string; sta
 
     return new Promise((res, rej) => {
         try {
-            Episode.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, show) => {
+            Episode.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, episode) => {
                 if (err) throw err;
-                if (!show) rej({ message: "Este show no existe", status: 404 });
+                if (!episode) rej({ message: "Este episodio no existe", status: 404 });
 
-                res({ message: "Show editado con exito", status: 200 });
+                res({ message: "Episodio editado con exito", status: 200 });
             });
         } catch (err) {
             rej({ message: "Error al consultar la base de datos", status: 500 });
@@ -130,4 +129,18 @@ const editEpisode = (id: string, data: ShowType): Promise<{ message: string; sta
     });
 };
 
-export default { editShow, createShow, getShows, getShowByID, removeShowByID, createNewEpisode, editEpisode };
+const removeEpisodeByID = (id: string): Promise<{ message: string; status: number }> => {
+    return new Promise((res, rej) => {
+        try {
+            Episode.findByIdAndDelete(id, {}, (err: CallbackError, episode) => {
+                if (err) throw err;
+                if (!episode) rej({ message: "Este episodio no existe", status: 404 });
+                res({ message: "Episodio eliminado con éxito", status: 200 });
+            });
+        } catch (err) {
+            rej({ message: "Error al consultar la base de datos", status: 500 });
+        }
+    });
+};
+
+export default { editShow, createShow, getShows, getShowByID, removeShowByID, createNewEpisode, editEpisode, removeEpisodeByID };
