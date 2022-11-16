@@ -71,9 +71,9 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<{ message
         try {
             Show.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, show) => {
                 if (err) throw err;
-                if (!show) rej({ message: "Este show no existe", status: 404 });
+                if (!show) rej({ message: "Esta entrada no existe", status: 404 });
 
-                res({ message: "Show editado con exito", status: 200 });
+                res({ message: "Entrada editada con éxito", status: 200 });
             });
         } catch (err) {
             rej({ message: "Error al consultar la base de datos", status: 500 });
@@ -106,12 +106,14 @@ const createShow = (data: ShowType): Promise<{ message: string; id?: string; sta
 const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ message: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
-            const newEpisode = new Episode(data);
-            newEpisode.save((err, episode: EpisodeType) => {
+            Show.findOne({ _id: targetShow }, {}, (err, show) => {
                 if (err) throw err;
-                Show.findOneAndUpdate({ _id: targetShow }, { $push: { episodes: episode._id } }, {}, (err, show) => {
+                if (!show) return rej({ message: "Este show no existe", status: 404 });
+                
+                const newEpisode = new Episode(data);
+                newEpisode.save((err, episode) => {
                     if (err) throw err;
-                    if (!show) rej({ message: "Este show no existe", status: 404 });
+                    show.update({ $push: { episodes: episode._id } });
                     res({ message: "Episodio añadido con éxito", status: 201 });
                 });
             });
