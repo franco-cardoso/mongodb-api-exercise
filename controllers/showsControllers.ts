@@ -22,7 +22,7 @@ const getShow = (req: Request, res: Response) => {
 
 const removeShow = (req: Request, res: Response) => {
     showsService
-        .removeShowByID(req.params.id)
+        .removeEntry(req.params.id, "Show")
         .then((result) => res.send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
@@ -32,7 +32,7 @@ const editShow = (req: Request, res: Response) => {
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
     showsService
-        .editShow(req.params.id, req.body)
+        .editEntry(req.params.id, "Show", req.body)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
@@ -69,17 +69,17 @@ const addEpisode = (req: Request, res: Response) => {
 const editEpisode = (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) return res.status(400).send(isInvalid);
-    
+
     showsService
-        .editEpisode(req.params.epId, req.body)
+        .editEntry(req.params.epId, "Episode", req.body)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
 const removeEpisode = (req: Request, res: Response) => {
     showsService
-        .removeEpisodeByID(req.params.epId)
-        .then((result) => res.send(result))
+        .removeEntry(req.params.epId, "Episode")
+        .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 

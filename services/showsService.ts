@@ -1,4 +1,4 @@
-import { CallbackError } from "mongoose";
+import mongoose, { CallbackError } from "mongoose";
 import { EpisodeType, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
@@ -37,13 +37,21 @@ const getShowByID = (id: string): Promise<{ message: string; status: number; sho
     });
 };
 
-const removeShowByID = (id: string): Promise<{ message: string; status: number }> => {
+/**
+ * Esta función, junto con editEntry, lleva exactamente el mismo codigo tanto para episodios
+ * como para shows, asi que reciben un parámetro extra 'model' para no tener que repetir el
+ * código solo para cambiar la colección
+ */
+const removeEntry = (id: string, model: string): Promise<{ message: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
-            Show.findByIdAndDelete(id, {}, (err: CallbackError, show) => {
+            const chosenModel = model === "Show" ? Show : model === "Episode" ? Episode : undefined;
+            if (!chosenModel) throw new Error("Invalid model");
+
+            chosenModel.findByIdAndDelete(id, {}, (err: CallbackError, show) => {
                 if (err) throw err;
-                if (!show) rej({ message: "Este show no existe", status: 404 });
-                res({ message: "Show eliminado con éxito", status: 200 });
+                if (!show) rej({ message: "Esta entrada no existe en la base de datos", status: 404 });
+                res({ message: "Entrada eliminada con éxito", status: 200 });
             });
         } catch (err) {
             rej({ message: "Error al consultar la base de datos", status: 500 });
@@ -51,12 +59,15 @@ const removeShowByID = (id: string): Promise<{ message: string; status: number }
     });
 };
 
-const editShow = (id: string, data: ShowType): Promise<{ message: string; status: number }> => {
+const editEntry = (id: string, model: string, data: ShowType): Promise<{ message: string; status: number }> => {
     Object.keys(data).forEach((key) => {
         if (data[key] === "") delete data[key];
     });
 
     return new Promise((res, rej) => {
+        const collection = model === "Show" ? Show : model === "Episode" ? Episode : null;
+        if (!collection) throw new Error("Invalid model");
+
         try {
             Show.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, show) => {
                 if (err) throw err;
@@ -110,37 +121,4 @@ const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ mess
     });
 };
 
-const editEpisode = (id: string, data: ShowType): Promise<{ message: string; status: number }> => {
-    Object.keys(data).forEach((key) => {
-        if (data[key] === "") delete data[key];
-    });
-
-    return new Promise((res, rej) => {
-        try {
-            Episode.findOneAndUpdate({ _id: id }, { $set: data }, {}, (err: CallbackError, episode) => {
-                if (err) throw err;
-                if (!episode) rej({ message: "Este episodio no existe", status: 404 });
-
-                res({ message: "Episodio editado con exito", status: 200 });
-            });
-        } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
-        }
-    });
-};
-
-const removeEpisodeByID = (id: string): Promise<{ message: string; status: number }> => {
-    return new Promise((res, rej) => {
-        try {
-            Episode.findByIdAndDelete(id, {}, (err: CallbackError, episode) => {
-                if (err) throw err;
-                if (!episode) rej({ message: "Este episodio no existe", status: 404 });
-                res({ message: "Episodio eliminado con éxito", status: 200 });
-            });
-        } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
-        }
-    });
-};
-
-export default { editShow, createShow, getShows, getShowByID, removeShowByID, createNewEpisode, editEpisode, removeEpisodeByID };
+export default { editEntry, createShow, getShows, getShowByID, removeEntry, createNewEpisode };
