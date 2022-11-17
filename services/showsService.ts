@@ -7,7 +7,7 @@ import Show from "../models/Show";
 // SHOWS
 // -----
 
-const getShows = (search: string | undefined): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
+const getShowsBySearch = (search: string | undefined): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
     // convierte el parametro 'search' a un regex, en caso de no existir 'search',
     // searchQuery va a ser undefined por lo que la funcion va a devolver a todos los shows sin filtrar
     const searchQuery: RegExp | undefined = search ? new RegExp(search, "i") : undefined;
@@ -42,7 +42,7 @@ const getShowByID = (id: string): Promise<{ message: string; status: number; sho
     });
 };
 
-const deleteShow = (id: string): Promise<{ message: string; status: number }> => {
+const deleteShowByID = (id: string): Promise<{ message: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
             Show.findById(id, {}, (err, show: HydratedDocument<ShowType>) => {
@@ -95,7 +95,7 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<{ message
     });
 };
 
-const createShow = (data: ShowType): Promise<{ message: string; id?: string | Types.ObjectId; status: number }> => {
+const createNewShow = (data: ShowType): Promise<{ message: string; id?: string | Types.ObjectId; status: number }> => {
     return new Promise((res, rej) => {
         try {
             Show.findOne({ title: data.title }, {}, (err, show: HydratedDocument<ShowType>) => {
@@ -163,7 +163,7 @@ const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ mess
     });
 };
 
-const deleteEpisode = (id: string, showID: string): Promise<{ message: string; status: number }> => {
+const deleteEpisodeByID = (id: string, showID: string): Promise<{ message: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
             Episode.findById(id, {}, (err, episode: HydratedDocument<EpisodeType>) => {
@@ -195,11 +195,11 @@ const deleteEpisode = (id: string, showID: string): Promise<{ message: string; s
 
 export default {
     editEntry,
-    createShow,
-    getShows,
+    createNewShow,
+    getShowsBySearch,
     getShowByID,
-    deleteShow,
+    deleteShowByID,
     createNewEpisode,
-    deleteEpisode,
+    deleteEpisodeByID,
     getEpisodesByShowID,
 };

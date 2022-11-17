@@ -6,14 +6,16 @@ import { showsService } from "../services";
 // SHOWS
 // -----
 
-const getAllShows = async (req: Request, res: Response) => {
+const getShows = async (req: Request, res: Response) => {
     await showsService
-        .getShows(req.query.search as string)
+        .getShowsBySearch(req.query.search as string)
         .then((result) => res.status(result.status).json(result.shows))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
 const getShow = async (req: Request, res: Response) => {
+    // el query param 'episodes' se usa para elegir si se quieren
+    // recibir los detalles del show, o sus episodios
     if (req.query.episodes) {
         await showsService
             .getEpisodesByShowID(req.params.id)
@@ -27,9 +29,9 @@ const getShow = async (req: Request, res: Response) => {
     }
 };
 
-const removeShow = async (req: Request, res: Response) => {
+const deleteShow = async (req: Request, res: Response) => {
     await showsService
-        .deleteShow(req.params.id)
+        .deleteShowByID(req.params.id)
         .then((result) => res.send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
@@ -49,7 +51,7 @@ const addShow = async (req: Request, res: Response) => {
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
     await showsService
-        .createShow(req.body)
+        .createNewShow(req.body)
         .then((result) =>
             res
                 .status(result.status)
@@ -85,7 +87,7 @@ const editEpisode = async (req: Request, res: Response) => {
 
 const removeEpisode = async (req: Request, res: Response) => {
     await showsService
-        .deleteEpisode(req.params.epId, req.params.id)
+        .deleteEpisodeByID(req.params.epId, req.params.id)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
@@ -93,9 +95,9 @@ const removeEpisode = async (req: Request, res: Response) => {
 
 export default {
     addShow,
-    getAllShows,
+    getShows,
     getShow,
-    removeShow,
+    deleteShow,
     editShow,
     addEpisode,
     editEpisode,

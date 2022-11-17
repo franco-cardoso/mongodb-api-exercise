@@ -7,9 +7,9 @@ import episodeSchema from "../controllers/schemas/episodeSchema";
 const showsRouter = express.Router();
 
 //      SHOWS
-showsRouter.get("/", showsControllers.getAllShows);
+showsRouter.get("/", showsControllers.getShows);
 showsRouter.get("/:id", showsControllers.getShow);
-showsRouter.delete("/:id", showsControllers.removeShow);
+showsRouter.delete("/:id", showsControllers.deleteShow);
 showsRouter.put("/:id", showSchemaPUT, showsControllers.editShow);
 showsRouter.post("/", showSchema, showsControllers.addShow);
 
