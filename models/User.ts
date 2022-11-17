@@ -26,4 +26,4 @@ UserSchema.pre("save", function (next) {
     });
 });
 
-export default model("User", UserSchema);
+export default model<UserType>("User", UserSchema);

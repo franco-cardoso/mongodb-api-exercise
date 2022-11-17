@@ -14,12 +14,14 @@ const getShows = (search: string | undefined): Promise<{ message: string; status
 
     return new Promise((res, rej) => {
         try {
-            Show.find(searchQuery ? { title: { $regex: searchQuery } } : {})
-                .select({ title: 1, description: 1, coverImg: 1 })
-                .exec((err, shows: HydratedDocument<ShowType>[]) => {
+            Show.find(
+                searchQuery ? { title: { $regex: searchQuery } } : {},
+                "title description coverImg",
+                (err, shows: HydratedDocument<ShowType>[]) => {
                     if (err) throw err;
                     res({ message: "", status: 200, shows: shows });
-                });
+                }
+            );
         } catch (err) {
             rej({ message: "Error al consultar la base de datos", status: 500 });
         }
@@ -29,7 +31,7 @@ const getShows = (search: string | undefined): Promise<{ message: string; status
 const getShowByID = (id: string): Promise<{ message: string; status: number; show?: ShowType }> => {
     return new Promise((res, rej) => {
         try {
-            Show.findById(id, {}, (err, show: HydratedDocument<ShowType>) => {
+            Show.findById(id, "title description coverImg type category", (err, show: HydratedDocument<ShowType>) => {
                 if (err) throw err;
                 if (!show) rej({ message: "Este show no existe", status: 404 });
                 res({ message: "", status: 200, show: show });
@@ -116,6 +118,28 @@ const createShow = (data: ShowType): Promise<{ message: string; id?: string | Ty
 // EPISODES
 // --------
 
+const getEpisodesByShowID = (
+    id: string
+): Promise<{ message: string; status: number; episodes: EpisodeType[] }> => {
+    return new Promise((res, rej) => {
+        try {
+            Show.findById(id, "episodes", (err, episodesArr: HydratedDocument<{ episodes: Types.ObjectId[] }>) => {
+                if (err) throw err;
+                Episode.find(
+                    { _id: { $in: episodesArr.episodes } },
+                    "title description",
+                    (err, episodes: HydratedDocument<EpisodeType>[]) => {
+                        if (err) throw err;
+                        res({ message: "", status: 200, episodes: episodes });
+                    }
+                );
+            });
+        } catch (err) {
+            rej({ message: "Error al consultar la base de datos", status: 500 });
+        }
+    });
+};
+
 const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ message: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
@@ -169,4 +193,13 @@ const deleteEpisode = (id: string, showID: string): Promise<{ message: string; s
     });
 };
 
-export default { editEntry, createShow, getShows, getShowByID, deleteShow, createNewEpisode, deleteEpisode };
+export default {
+    editEntry,
+    createShow,
+    getShows,
+    getShowByID,
+    deleteShow,
+    createNewEpisode,
+    deleteEpisode,
+    getEpisodesByShowID,
+};

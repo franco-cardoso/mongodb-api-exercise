@@ -14,10 +14,17 @@ const getAllShows = async (req: Request, res: Response) => {
 };
 
 const getShow = async (req: Request, res: Response) => {
-    await showsService
-        .getShowByID(req.params.id)
-        .then((result) => res.status(result.status).json(result.show))
-        .catch((rej) => res.status(rej.status).send(rej));
+    if (req.query.episodes) {
+        await showsService
+            .getEpisodesByShowID(req.params.id)
+            .then((result) => res.status(result.status).send(result))
+            .catch((rej) => res.status(rej.status).send(rej));
+    } else {
+        await showsService
+            .getShowByID(req.params.id)
+            .then((result) => res.status(result.status).json(result))
+            .catch((rej) => res.status(rej.status).send(rej));
+    }
 };
 
 const removeShow = async (req: Request, res: Response) => {
@@ -83,4 +90,14 @@ const removeEpisode = async (req: Request, res: Response) => {
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-export default { addShow, getAllShows, getShow, removeShow, editShow, addEpisode, editEpisode, removeEpisode };
+
+export default {
+    addShow,
+    getAllShows,
+    getShow,
+    removeShow,
+    editShow,
+    addEpisode,
+    editEpisode,
+    removeEpisode,
+};
