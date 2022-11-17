@@ -65,11 +65,9 @@ const deleteShowByID = (id: string): Promise<{ message: string; status: number }
     });
 };
 
-/**
- * Esta función lleva exactamente el mismo código tanto para episodios
- * como para shows, asi que recibe un parámetro extra 'model' para no tener que repetir el
- * código solo para cambiar la colección
- */
+// Esta función lleva exactamente el mismo código tanto para episodios
+// como para shows, asi que recibe un parámetro extra 'model' para no tener que repetir el
+// código solo para cambiar la colección
 const editEntry = (id: string, model: string, data: ShowType): Promise<{ message: string; status: number }> => {
     Object.keys(data).forEach((key) => {
         if (data[key] === "") delete data[key];
@@ -178,16 +176,15 @@ const deleteEpisodeByID = (id: string, showID: string): Promise<{ message: strin
                 Show.findById(showID, {}, (err, show: HydratedDocument<ShowType>) => {
                     if (err) throw err;
                     if (!show) return rej({ message: "Este show no existe", status: 404 });
+                    if (!show.episodes.includes(new Types.ObjectId(id))) {
+                        return rej({ message: "Este episodio no existe en este show", status: 404 });
+                    }
 
-                    show.updateOne(
-                        { episodes: show.episodes.filter((item) => String(item) !== String(episode._id)) },
-                        {},
-                        (err) => {
-                            if (err) throw err;
-                            episode.deleteOne();
-                            res({ message: "Episodio eliminado con éxito", status: 200 });
-                        }
-                    );
+                    show.updateOne({ $pull: { episodes: new Types.ObjectId(episode._id) } }, {}, (err) => {
+                        if (err) throw err;
+                        episode.deleteOne();
+                        res({ message: "Episodio eliminado con éxito", status: 200 });
+                    });
                 });
             });
         } catch (err) {
