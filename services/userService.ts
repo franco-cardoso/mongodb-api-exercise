@@ -14,7 +14,20 @@ const createUser = (userData: UserType): Promise<{ message: string; status: numb
                 {},
                 (err, user: HydratedDocument<UserType>) => {
                     if (err) throw err;
-                    if (user) return rej({ message: "Este correo ya se encuentra en uso", at: "email", status: 400 });
+                    if (user.email === userData.email) {
+                        return rej({
+                            message: "Este correo ya se encuentra en uso",
+                            at: "email",
+                            status: 400,
+                        });
+                    }
+                    if (user.username === userData.username) {
+                        return rej({
+                            message: "Este nombre de usuario ya se encuentra en uso",
+                            at: "username",
+                            status: 400,
+                        });
+                    }
 
                     newUser.save((err) => {
                         if (err) throw err;
@@ -73,7 +86,7 @@ const addFav = (userId: string, showId: string): Promise<{ message: string; stat
 
                 const idToAdd = new Types.ObjectId(showId);
                 user.updateOne(
-                    // si la ID existe en la lista de favoritos usa $pull para sacarla
+                    // si la ID existe en la lista de favoritos usa $pull para eliminarla
                     // si no, usa $push para añadirla
                     { [user.favorites.includes(idToAdd) ? "$pull" : "$push"]: { favorites: idToAdd } },
                     {},
