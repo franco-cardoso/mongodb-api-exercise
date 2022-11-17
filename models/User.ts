@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import { UserType } from "../misc/types";
 import { DateTime } from "luxon";
@@ -9,7 +9,7 @@ const UserSchema = new Schema<UserType>(
         username: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         registerDate: { type: Date, required: true, default: DateTime.now() },
-        favorites: { type: [String], required: false, default: [] },
+        favorites: { type: [Types.ObjectId], required: false, default: [] },
     },
     { collection: "users" }
 );

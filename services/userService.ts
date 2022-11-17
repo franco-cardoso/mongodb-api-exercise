@@ -1,5 +1,5 @@
 import { compareSync } from "bcrypt";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import { UserType } from "../misc/types";
 import User from "../models/User";
 import authService from "./authService";
@@ -64,4 +64,29 @@ const attemptLogin = (credentials: {
     });
 };
 
-export default { createUser, attemptLogin };
+const addFav = (userId: string, showId: string): Promise<{ message: string; status: number }> => {
+    return new Promise((res, rej) => {
+        try {
+            User.findById(userId, {}, (err, user: HydratedDocument<UserType>) => {
+                if (err) throw err;
+                if (!user) return rej({ message: "Este usuario no existe", status: 404 });
+
+                const idToAdd = new Types.ObjectId(showId);
+                user.updateOne(
+                    // si la ID existe en la lista de favoritos usa $pull para sacarla
+                    // si no, usa $push para añadirla
+                    { [user.favorites.includes(idToAdd) ? "$pull" : "$push"]: { favorites: idToAdd } },
+                    {},
+                    (err) => {
+                        if (err) throw err;
+                        res({ message: "Show añadido a favoritos", status: 200 });
+                    }
+                );
+            });
+        } catch (err) {
+            rej({ message: "Ocurrió un error al iniciar sesión", status: 500 });
+        }
+    });
+};
+
+export default { createUser, attemptLogin, addFav };

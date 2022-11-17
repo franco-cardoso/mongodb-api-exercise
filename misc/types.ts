@@ -6,7 +6,7 @@ interface UserType {
     email: string;
     password: string;
     registerDate?: Date;
-    favorites: string[];
+    favorites: Types.ObjectId[];
 }
 
 interface ShowType {

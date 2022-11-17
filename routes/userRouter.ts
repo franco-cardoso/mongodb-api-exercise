@@ -7,5 +7,6 @@ const userRouter = express.Router();
 
 userRouter.post("/login", userMiddleware.handleLoginCredentials, userControllers.loginUser);
 userRouter.post("/register", userSchema, userControllers.signUpUser);
+userRouter.put("/", userMiddleware.isAuth, userControllers.addShowToFav);
 
 export default userRouter;

@@ -19,4 +19,11 @@ const signUpUser = async (req: Request, res: Response) => {
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-export default { loginUser, signUpUser };
+const addShowToFav = async (req: Request, res: Response) => {
+    await userService
+        .addFav(res.locals.currentUser, req.query.fav as string)
+        .then((result) => res.status(result.status).send(result))
+        .catch((rej) => res.status(rej.status).send(rej));
+};
+
+export default { loginUser, signUpUser, addShowToFav };
