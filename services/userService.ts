@@ -14,13 +14,7 @@ const createUser = (userData: UserType): Promise<{ message: string; status: numb
                 {},
                 (err, user: HydratedDocument<UserType>) => {
                     if (err) throw err;
-                    if (user) {
-                        return rej({
-                            message: "Este correo ya se encuentra en uso",
-                            at: "email",
-                            status: 400,
-                        });
-                    }
+                    if (user) return rej({ message: "Este correo ya se encuentra en uso", at: "email", status: 400 });
 
                     newUser.save((err) => {
                         if (err) throw err;
@@ -49,8 +43,8 @@ const attemptLogin = (credentials: {
         // prettier-ignore
         try{
             User.findOne(
-            {[Object.keys(credentials)[0]]: Object.values(credentials)[0]},         // usa la primera propiedad de 'credentials' sin saber                                         
-            {},(err, user: HydratedDocument<UserType>) => {                         // su nombre, ya que podria ser 'email' o 'username'
+            {[Object.keys(credentials)[0]]: Object.values(credentials)[0]},    // usa la primera propiedad de 'credentials' sin saber                                         
+            {},(err, user: HydratedDocument<UserType>) => {                    // su nombre, ya que podria ser 'email' o 'username'
                 if (err) {
                     return rej({ message: "Ocurrió un error al intentar iniciar sesión", status: 500 });
                 }

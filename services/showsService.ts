@@ -1,13 +1,16 @@
-import mongoose, { CallbackError, HydratedDocument, Model, Schema, SchemaType, Types } from "mongoose";
+import { CallbackError, HydratedDocument, Types } from "mongoose";
 import { EpisodeType, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
+
 // -----
 // SHOWS
 // -----
 
 const getShows = (search: string | undefined): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
-    const searchQuery: RegExp | null = search ? new RegExp(search, "i") : null;
+    // convierte el parametro 'search' a un regex, en caso de no existir 'search',
+    // searchQuery va a ser undefined por lo que la funcion va a devolver a todos los shows sin filtrar
+    const searchQuery: RegExp | undefined = search ? new RegExp(search, "i") : undefined;
 
     return new Promise((res, rej) => {
         try {
@@ -37,35 +40,6 @@ const getShowByID = (id: string): Promise<{ message: string; status: number; sho
     });
 };
 
-/*
-
-{
-  "_id": {
-    "$oid": "63755576c36c0d47d87bba36"
-  },
-  "title": "zcvzvczxcvxvwes",
-  "description": "wdasdawdasd",
-  "coverImg": "https://projectzomboid.com/blog/content/uploads/2022/11/polaris.png",
-  "type": "OVA",
-  "category": "Ecchi",
-  "episodes": [
-    {
-      "$oid": "6375557fc36c0d47d87bba39"
-    },
-    {
-      "$oid": "63755580c36c0d47d87bba3d"
-    },
-    {
-      "$oid": "63755581c36c0d47d87bba41"
-    },
-    {
-      "$oid": "63755581c36c0d47d87bba45"
-    }
-  ],
-  "__v": 0
-}
-
-*/
 const deleteShow = (id: string): Promise<{ message: string; status: number }> => {
     return new Promise((res, rej) => {
         try {
@@ -73,10 +47,11 @@ const deleteShow = (id: string): Promise<{ message: string; status: number }> =>
                 if (err) throw err;
                 if (!show) return rej({ message: "Este show no existe", status: 404 });
 
-                show.deleteOne();
-
+                // elimina todos los episodios que se encuentren
+                // dentro del array 'episodes', y elimina el show
                 Episode.deleteMany({ _id: { $in: show.episodes } }, {}, (err) => {
                     if (err) throw err;
+                    show.deleteOne();
                     res({ message: "Show eliminado con éxito", status: 200 });
                 });
             });
@@ -105,7 +80,7 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<{ message
                 { _id: id },
                 { $set: data },
                 {},
-                (err: CallbackError, show: HydratedDocument<ShowType> | HydratedDocument<EpisodeType>) => {
+                (err: CallbackError, show: HydratedDocument<ShowType, EpisodeType>) => {
                     if (err) throw err;
                     if (!show) rej({ message: "Esta entrada no existe", status: 404 });
 
@@ -151,6 +126,7 @@ const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ mess
                 const newEpisode = new Episode(data);
                 newEpisode.save((err, episode: HydratedDocument<EpisodeType>) => {
                     if (err) throw err;
+
                     show.updateOne({ $push: { episodes: episode._id } }, {}, (err) => {
                         if (err) throw err;
                         res({ message: "Episodio añadido con éxito", status: 201 });
@@ -170,15 +146,21 @@ const deleteEpisode = (id: string, showID: string): Promise<{ message: string; s
                 if (err) throw err;
                 if (!episode) return rej({ message: "Este episodio no existe", status: 404 });
 
+                // encuentra el show correspondiente y elimina el episodio de su array
+                // antes de eliminar el episodio en cuestión
                 Show.findById(showID, {}, (err, show: HydratedDocument<ShowType>) => {
                     if (err) throw err;
                     if (!show) return rej({ message: "Este show no existe", status: 404 });
 
-                    episode.deleteOne();
-                    show.updateOne({ episodes: show.episodes.filter((item) => String(item) !== String(episode._id)) }, {}, (err) => {
-                        if (err) throw err;
-                        res({ message: "Episodio eliminado con éxito", status: 200 });
-                    });
+                    show.updateOne(
+                        { episodes: show.episodes.filter((item) => String(item) !== String(episode._id)) },
+                        {},
+                        (err) => {
+                            if (err) throw err;
+                            episode.deleteOne();
+                            res({ message: "Episodio eliminado con éxito", status: 200 });
+                        }
+                    );
                 });
             });
         } catch (err) {
