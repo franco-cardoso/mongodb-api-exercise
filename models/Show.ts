@@ -13,4 +13,4 @@ const ShowSchema = new Schema<ShowType>(
     { collection: "shows" }
 );
 
-export default model("Show", ShowSchema);
+export default model<ShowType>("Show", ShowSchema);

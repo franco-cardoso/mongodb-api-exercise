@@ -22,7 +22,7 @@ const getShow = (req: Request, res: Response) => {
 
 const removeShow = (req: Request, res: Response) => {
     showsService
-        .removeEntry(req.params.id, "Show")
+        .deleteShow(req.params.id)
         .then((result) => res.send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
@@ -78,7 +78,7 @@ const editEpisode = (req: Request, res: Response) => {
 
 const removeEpisode = (req: Request, res: Response) => {
     showsService
-        .removeEntry(req.params.epId, "Episode")
+        .deleteEpisode(req.params.epId, req.params.id)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };

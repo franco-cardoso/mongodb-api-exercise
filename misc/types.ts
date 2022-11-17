@@ -1,7 +1,7 @@
-import { ObjectId } from "mongoose";
+import { Types, ObjectId } from "mongoose";
 
 interface UserType {
-    _id?: ObjectId;
+    _id?: Types.ObjectId | string;
     username: string;
     email: string;
     password: string;
@@ -10,18 +10,18 @@ interface UserType {
 }
 
 interface ShowType {
-    [key: string]: string | string[] | undefined;
-    _id?: string;
+    [key: string]: Types.ObjectId | Types.ObjectId[] | string | string[] | undefined;
+    _id: Types.ObjectId | string;
     title: string;
     description: string;
     coverImg: string;
     type: string;
     category: string;
-    episodes: string[];
+    episodes: Types.ObjectId[];
 }
 
 interface EpisodeType {
-    _id?: ObjectId;
+    _id?: Types.ObjectId | string;
     title: string;
     description: string;
     url: string;
