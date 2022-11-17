@@ -7,7 +7,9 @@ import Show from "../models/Show";
 // SHOWS
 // -----
 
-const getShowsBySearch = (search: string | undefined): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
+const getShowsBySearch = (
+    search: string | undefined
+): Promise<{ message: string; status: number; shows?: ShowType[] }> => {
     // convierte el parametro 'search' a un regex, en caso de no existir 'search',
     // searchQuery va a ser undefined por lo que la funcion va a devolver a todos los shows sin filtrar
     const searchQuery: RegExp | undefined = search ? new RegExp(search, "i") : undefined;
@@ -118,9 +120,7 @@ const createNewShow = (data: ShowType): Promise<{ message: string; id?: string |
 // EPISODES
 // --------
 
-const getEpisodesByShowID = (
-    id: string
-): Promise<{ message: string; status: number; episodes: EpisodeType[] }> => {
+const getEpisodesByShowID = (id: string): Promise<{ message: string; status: number; episodes: EpisodeType[] }> => {
     return new Promise((res, rej) => {
         try {
             Show.findById(id, "episodes", (err, episodesArr: HydratedDocument<{ episodes: Types.ObjectId[] }>) => {
@@ -140,7 +140,10 @@ const getEpisodesByShowID = (
     });
 };
 
-const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ message: string; status: number }> => {
+const createNewEpisode = (
+    data: EpisodeType,
+    targetShow: string
+): Promise<{ message: string; epId: string | Types.ObjectId; status: number }> => {
     return new Promise((res, rej) => {
         try {
             Show.findOne({ _id: targetShow }, {}, (err, show: HydratedDocument<ShowType>) => {
@@ -153,7 +156,7 @@ const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<{ mess
 
                     show.updateOne({ $push: { episodes: episode._id } }, {}, (err) => {
                         if (err) throw err;
-                        res({ message: "Episodio añadido con éxito", status: 201 });
+                        res({ message: "Episodio añadido con éxito", epId: episode._id, status: 201 });
                     });
                 });
             });

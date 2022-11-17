@@ -55,7 +55,9 @@ const addShow = async (req: Request, res: Response) => {
         .then((result) =>
             res
                 .status(result.status)
-                .header({ Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${result.id}` })
+                .header({
+                    Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${result.id}`,
+                })
                 .send(result)
         )
         .catch((rej) => res.status(rej.status).send(rej));
@@ -71,7 +73,14 @@ const addEpisode = async (req: Request, res: Response) => {
 
     await showsService
         .createNewEpisode(req.body, req.params.id)
-        .then((result) => res.status(result.status).send(result))
+        .then((result) =>
+            res
+                .status(result.status)
+                .header({
+                    Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${req.params.id}/${result.epId}`,
+                })
+                .send(result)
+        )
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
@@ -91,7 +100,6 @@ const removeEpisode = async (req: Request, res: Response) => {
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
-
 
 export default {
     addShow,
