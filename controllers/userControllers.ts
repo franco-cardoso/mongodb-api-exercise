@@ -2,18 +2,18 @@ import { Request, Response } from "express";
 import { validationFormatter } from ".";
 import { userService } from "../services";
 
-const loginUser = (req: Request, res: Response) => {
-    userService
+const loginUser = async (req: Request, res: Response) => {
+    await userService
         .attemptLogin(req.body)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const signUpUser = (req: Request, res: Response) => {
+const signUpUser = async (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
-    userService
+    await userService
         .createUser(req.body)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));

@@ -6,42 +6,42 @@ import { showsService } from "../services";
 // SHOWS
 // -----
 
-const getAllShows = (req: Request, res: Response) => {
-    showsService
+const getAllShows = async (req: Request, res: Response) => {
+    await showsService
         .getShows(req.query.search as string)
         .then((result) => res.status(result.status).json(result.shows))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const getShow = (req: Request, res: Response) => {
-    showsService
+const getShow = async (req: Request, res: Response) => {
+    await showsService
         .getShowByID(req.params.id)
         .then((result) => res.status(result.status).json(result.show))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const removeShow = (req: Request, res: Response) => {
-    showsService
+const removeShow = async (req: Request, res: Response) => {
+    await showsService
         .deleteShow(req.params.id)
         .then((result) => res.send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const editShow = (req: Request, res: Response) => {
+const editShow = async (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
-    showsService
+    await showsService
         .editEntry(req.params.id, "Show", req.body)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const addShow = (req: Request, res: Response) => {
+const addShow = async (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
-    showsService
+    await showsService
         .createShow(req.body)
         .then((result) =>
             res
@@ -56,28 +56,28 @@ const addShow = (req: Request, res: Response) => {
 // EPISODES
 // --------
 
-const addEpisode = (req: Request, res: Response) => {
+const addEpisode = async (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
-    showsService
+    await showsService
         .createNewEpisode(req.body, req.params.id)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const editEpisode = (req: Request, res: Response) => {
+const editEpisode = async (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
-    showsService
+    await showsService
         .editEntry(req.params.epId, "Episode", req.body)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const removeEpisode = (req: Request, res: Response) => {
-    showsService
+const removeEpisode = async (req: Request, res: Response) => {
+    await showsService
         .deleteEpisode(req.params.epId, req.params.id)
         .then((result) => res.status(result.status).send(result))
         .catch((rej) => res.status(rej.status).send(rej));
