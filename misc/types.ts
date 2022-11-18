@@ -10,7 +10,7 @@ interface UserType {
 }
 
 interface ShowType {
-    [key: string]: Types.ObjectId | Types.ObjectId[] | string | string[] | undefined;
+    [key: string]: any;
     _id: Types.ObjectId | string;
     title: string;
     description: string;
