@@ -20,6 +20,11 @@ const signUpUser = async (req: Request, res: Response) => {
 };
 
 const addShowToFav = async (req: Request, res: Response) => {
+    // 'res.locals.currentUser' almacena la ID  
+    // desencriptada de una token desde 'isAuth'.
+    //
+    // 'req.query.fav' debe ser la ID de un show
+    // en el query param '?fav='
     await userService
         .addFav(res.locals.currentUser, req.query.fav as string)
         .then((result) => res.status(result.status).send(result))

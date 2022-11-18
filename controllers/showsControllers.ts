@@ -9,7 +9,7 @@ import { showsService } from "../services";
 const getShows = async (req: Request, res: Response) => {
     await showsService
         .getShowsBySearch(req.query.search as string)
-        .then((result) => res.status(result.status).json(result.shows))
+        .then((result) => res.status(result.status).json(result.data))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
@@ -40,6 +40,9 @@ const editShow = async (req: Request, res: Response) => {
     const isInvalid: Object[] = validationFormatter(req).array();
     if (isInvalid[0]) return res.status(400).send(isInvalid);
 
+    // editEntry funciona tanto para episodios como para
+    // shows asi que con el segundo parametro se indica
+    // en que modelo usarla
     await showsService
         .editEntry(req.params.id, "Show", req.body)
         .then((result) => res.status(result.status).send(result))
@@ -56,7 +59,7 @@ const addShow = async (req: Request, res: Response) => {
             res
                 .status(result.status)
                 .header({
-                    Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${result.id}`,
+                    Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${result.data}`,
                 })
                 .send(result)
         )
@@ -77,7 +80,7 @@ const addEpisode = async (req: Request, res: Response) => {
             res
                 .status(result.status)
                 .header({
-                    Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${req.params.id}/${result.epId}`,
+                    Location: `${process.env.HOSTNAME}:${process.env.PORT}/api/shows/${req.params.id}/${result.data}`,
                 })
                 .send(result)
         )

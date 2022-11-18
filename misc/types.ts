@@ -1,6 +1,10 @@
-import { Types, ObjectId } from "mongoose";
+import { Types } from "mongoose";
 
+// las keys estan tipadas a 'string'
+// porque typescript no me dejaba indexar
+// objetos de estos tipo usando strings
 interface UserType {
+    [key: string]: any;
     _id?: Types.ObjectId | string;
     username: string;
     email: string;
@@ -21,10 +25,17 @@ interface ShowType {
 }
 
 interface EpisodeType {
+    [key: string]: any;
     _id?: Types.ObjectId | string;
     title: string;
     description: string;
     url: string;
 }
 
-export { EpisodeType, UserType, ShowType };
+interface ServiceResponse {
+    message: string;
+    status: number;
+    data?: any;
+}
+
+export { EpisodeType, UserType, ShowType, ServiceResponse };

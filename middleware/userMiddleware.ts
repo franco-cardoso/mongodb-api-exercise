@@ -17,15 +17,26 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
+// la propiedad 'userHandle' en las credenciales para iniciar sesión puede ser
+// el correo o el nombre de usuario, este middleware se asegura de que userHandle
+// se renombre a 'email' o 'username' acordemente
 const handleLoginCredentials = (req: Request, res: Response, next: NextFunction) => {
     const { userHandle, password } = req.body;
     const typeOfHandle = userHandle.includes("@") ? "email" : "username";
-    
+
     if (!userHandle) {
-        return res.status(400).send({ message: "Debes ingresar tu nombre de usuario o correo", at: typeOfHandle, status: 400 });
+        return res.status(400).send({
+            message: "Debes ingresar tu nombre de usuario o correo",
+            at: "userHandle",
+            status: 400,
+        });
     }
     if (!password) {
-        return res.status(400).send({ message: "Debes ingresar tu contraseña", at: "password", status: 400 });
+        return res.status(400).send({
+            message: "Debes ingresar tu contraseña",
+            at: "password",
+            status: 400,
+        });
     }
 
     req.body = {

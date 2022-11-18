@@ -1,14 +1,12 @@
 import { CallbackError, HydratedDocument, Types } from "mongoose";
-import { EpisodeType, ShowType } from "../misc/types";
+import { EpisodeType, ServiceResponse, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
 
 // -----
 // SHOWS
 // -----
-const getShowsBySearch = (
-    search: string | undefined
-): Promise<{ message: string; status: number; shows: ShowType[] }> => {
+const getShowsBySearch = (search: string | undefined): Promise<ServiceResponse> => {
     // convierte el parametro 'search' a un regex, en caso de no existir 'search',
     // searchQuery va a ser undefined y la funcion va retorna todos los shows sin filtrar
     const searchQuery: RegExp | undefined = search ? new RegExp(search, "i") : undefined;
@@ -20,7 +18,7 @@ const getShowsBySearch = (
                 "title description coverImg",
                 (err, shows: HydratedDocument<ShowType>[]) => {
                     if (err) throw err;
-                    res({ message: "", status: 200, shows: shows });
+                    res({ message: "", status: 200, data: shows });
                 }
             );
         } catch (err) {
@@ -29,13 +27,13 @@ const getShowsBySearch = (
     });
 };
 
-const getShowByID = (id: string): Promise<{ message: string; status: number; show: ShowType }> => {
+const getShowByID = (id: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             Show.findById(id, "title description coverImg type category", (err, show: HydratedDocument<ShowType>) => {
                 if (err) throw err;
                 if (!show) rej({ message: "Este show no existe", status: 404 });
-                res({ message: "", status: 200, show: show });
+                res({ message: "", status: 200, data: show });
             });
         } catch (err) {
             rej({ message: "Error al consultar la base de datos", status: 500 });
@@ -43,7 +41,7 @@ const getShowByID = (id: string): Promise<{ message: string; status: number; sho
     });
 };
 
-const deleteShowByID = (id: string): Promise<{ message: string; status: number }> => {
+const deleteShowByID = (id: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             Show.findById(id, {}, (err, show: HydratedDocument<ShowType>) => {
@@ -67,16 +65,16 @@ const deleteShowByID = (id: string): Promise<{ message: string; status: number }
 // Esta función lleva exactamente el mismo código tanto para episodios
 // como para shows, asi que recibe un parámetro extra 'model' para no tener que repetir el
 // código solo para cambiar la colección
-const editEntry = (id: string, model: string, data: ShowType): Promise<{ message: string; status: number }> => {
+const editEntry = (id: string, model: string, data: ShowType): Promise<ServiceResponse> => {
     Object.keys(data).forEach((key) => {
         if (data[key] === "") delete data[key];
     });
 
     return new Promise((res, rej) => {
-        const chosenModel: any = model === "Show" ? Show : model === "Episode" ? Episode : undefined;
-        if (chosenModel === undefined) throw new Error("Invalid model");
-
         try {
+            const chosenModel: any = model === "Show" ? Show : model === "Episode" ? Episode : undefined;
+            if (chosenModel === undefined) throw new Error("Invalid model");
+
             chosenModel.findOneAndUpdate(
                 { _id: id },
                 { $set: data },
@@ -94,7 +92,7 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<{ message
     });
 };
 
-const createNewShow = (data: ShowType): Promise<{ message: string; id: string | Types.ObjectId; status: number }> => {
+const createNewShow = (data: ShowType): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             Show.findOne({ title: data.title }, {}, (err, show: HydratedDocument<ShowType>) => {
@@ -104,7 +102,7 @@ const createNewShow = (data: ShowType): Promise<{ message: string; id: string | 
                 const newShow = new Show(data);
                 newShow.save((err, savedShow: HydratedDocument<ShowType>) => {
                     if (err) throw err;
-                    res({ message: "Show creado con exito", id: savedShow._id, status: 201 });
+                    res({ message: "Show creado con exito", data: savedShow._id, status: 201 });
                 });
             });
         } catch (err) {
@@ -117,7 +115,7 @@ const createNewShow = (data: ShowType): Promise<{ message: string; id: string | 
 // EPISODES
 // --------
 
-const getEpisodesByShowID = (id: string): Promise<{ message: string; status: number; episodes: EpisodeType[] }> => {
+const getEpisodesByShowID = (id: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             Show.findById(id, "episodes", (err, episodesArr: HydratedDocument<{ episodes: Types.ObjectId[] }>) => {
@@ -127,7 +125,7 @@ const getEpisodesByShowID = (id: string): Promise<{ message: string; status: num
                     "title description",
                     (err, episodes: HydratedDocument<EpisodeType>[]) => {
                         if (err) throw err;
-                        res({ message: "", status: 200, episodes: episodes });
+                        res({ message: "", status: 200, data: episodes });
                     }
                 );
             });
@@ -140,7 +138,7 @@ const getEpisodesByShowID = (id: string): Promise<{ message: string; status: num
 const createNewEpisode = (
     data: EpisodeType,
     targetShow: string
-): Promise<{ message: string; epId: string | Types.ObjectId; status: number }> => {
+): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             Show.findOne({ _id: targetShow }, {}, (err, show: HydratedDocument<ShowType>) => {
@@ -153,7 +151,7 @@ const createNewEpisode = (
 
                     show.updateOne({ $push: { episodes: episode._id } }, {}, (err) => {
                         if (err) throw err;
-                        res({ message: "Episodio añadido con éxito", epId: episode._id, status: 201 });
+                        res({ message: "Episodio añadido con éxito", data: episode._id, status: 201 });
                     });
                 });
             });
@@ -163,7 +161,7 @@ const createNewEpisode = (
     });
 };
 
-const deleteEpisodeByID = (id: string, showID: string): Promise<{ message: string; status: number }> => {
+const deleteEpisodeByID = (id: string, showID: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             Episode.findById(id, {}, (err, episode: HydratedDocument<EpisodeType>) => {

@@ -1,10 +1,10 @@
-import express from "express";
+import { Router } from "express";
 import { showsControllers } from "../controllers";
 import showSchemaPUT from "../controllers/schemas/showSchemaPUT";
 import showSchema from "../controllers/schemas/showSchema";
 import episodeSchema from "../controllers/schemas/episodeSchema";
 
-const showsRouter = express.Router();
+const showsRouter = Router();
 
 //      SHOWS
 showsRouter.get("/", showsControllers.getShows);

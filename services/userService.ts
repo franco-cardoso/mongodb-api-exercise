@@ -1,6 +1,6 @@
 import { compareSync } from "bcrypt";
 import { HydratedDocument, Types } from "mongoose";
-import { UserType } from "../misc/types";
+import { ServiceResponse, UserType } from "../misc/types";
 import User from "../models/User";
 import authService from "./authService";
 
@@ -49,7 +49,7 @@ const attemptLogin = (credentials: {
     email?: string;
     username?: string;
     password: string;
-}): Promise<{ message: string; status: number; token?: string }> => {
+}): Promise<ServiceResponse> => {
     const { password } = credentials;
 
     return new Promise((res, rej) => {
@@ -68,7 +68,7 @@ const attemptLogin = (credentials: {
                     return rej({ message: "Datos incorrectos", status: 400 });
                 }
                 
-                res({ message: "Iniciado sesión con exito", status: 200, token: authService.createToken(user) });
+                res({ message: "Iniciado sesión con exito", status: 200, data: authService.createToken(user) });
             }
             );
         } catch (err) {
@@ -77,7 +77,7 @@ const attemptLogin = (credentials: {
     });
 };
 
-const addFav = (userId: string, showId: string): Promise<{ message: string; status: number }> => {
+const addFav = (userId: string, showId: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             User.findById(userId, {}, (err, user: HydratedDocument<UserType>) => {
