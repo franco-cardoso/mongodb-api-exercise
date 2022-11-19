@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 // las keys estan tipadas a 'string'
 // porque typescript no me dejaba indexar
 // objetos de estos tipo usando strings
-interface UserType {
+type UserType = {
     [key: string]: any;
     _id?: Types.ObjectId | string;
     username: string;
@@ -13,7 +13,7 @@ interface UserType {
     favorites: Types.ObjectId[];
 }
 
-interface ShowType {
+type ShowType = {
     [key: string]: any;
     _id: Types.ObjectId | string;
     title: string;
@@ -24,7 +24,7 @@ interface ShowType {
     episodes: Types.ObjectId[];
 }
 
-interface EpisodeType {
+type EpisodeType = {
     [key: string]: any;
     _id?: Types.ObjectId | string;
     title: string;
@@ -32,7 +32,7 @@ interface EpisodeType {
     url: string;
 }
 
-interface ServiceResponse {
+type ServiceResponse = {
     message: string;
     status: number;
     data?: any;

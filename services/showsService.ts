@@ -1,4 +1,4 @@
-import { CallbackError, HydratedDocument, Types } from "mongoose";
+import { CallbackError, HydratedDocument, InferSchemaType, Model, Types } from "mongoose";
 import { EpisodeType, ServiceResponse, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
@@ -79,7 +79,7 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<ServiceRe
                 { _id: id },
                 { $set: data },
                 {},
-                (err: CallbackError, show: HydratedDocument<ShowType, EpisodeType>) => {
+                (err: CallbackError, show: HydratedDocument<ShowType | EpisodeType>) => {
                     if (err) throw err;
                     if (!show) rej({ message: "Esta entrada no existe", status: 404 });
 
