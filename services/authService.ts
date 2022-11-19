@@ -21,7 +21,7 @@ const decodeToken = (token: string): Promise<ServiceResponse> => {
             }
             return res({ message: "", status: 200, data: payload.sub });
         } catch (err) {
-            rej({ status: 401, message: "Invalid token" });
+            rej({ status: 401, message: "Invalid token", error: err });
         }
     });
 };

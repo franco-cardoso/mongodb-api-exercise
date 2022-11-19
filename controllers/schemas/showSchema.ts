@@ -35,10 +35,14 @@ export default [
 
         ,
 
-    check("category")
+    check("categories")
         .exists()    
         .notEmpty()
-        .withMessage("Debes elegir la categoría")
+        .withMessage("Debes elegir las categorías")
+    
+        ,
+
+    check("categories.*")
         .isIn(categories)
-        .withMessage("Esta categoría es inválida")   
+        .withMessage("Categorías invalidas")
     ]

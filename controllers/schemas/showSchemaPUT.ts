@@ -34,8 +34,8 @@ export default [
 
         ,
 
-    check("category")
+    check("categories.*")
         .isIn(categories)
-        .withMessage("Esta categoría es inválida")   
+        .withMessage("Categorías invalidas")
         .optional({nullable:true,checkFalsy:true})
     ]

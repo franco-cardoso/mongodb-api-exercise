@@ -20,7 +20,7 @@ interface ShowType {
     description: string;
     coverImg: string;
     type: string;
-    category: string;
+    categories: [string];
     episodes: Types.ObjectId[];
 }
 
