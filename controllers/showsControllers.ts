@@ -13,7 +13,7 @@ const getShows = async (req: Request, res: Response) => {
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
-const getShow = async (req: Request, res: Response) => {
+const getShowDetails = async (req: Request, res: Response) => {
     // si existe el query param "?episodes", se envia
     // una lista de los episodios del show
     if ("episodes" in req.query) {
@@ -107,7 +107,7 @@ const removeEpisode = async (req: Request, res: Response) => {
 export default {
     addShow,
     getShows,
-    getShow,
+    getShowDetails,
     deleteShow,
     editShow,
     addEpisode,

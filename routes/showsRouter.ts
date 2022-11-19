@@ -8,7 +8,7 @@ const showsRouter = Router();
 
 //      SHOWS
 showsRouter.get("/", showsControllers.getShows);
-showsRouter.get("/:id", showsControllers.getShow);
+showsRouter.get("/:id", showsControllers.getShowDetails);
 showsRouter.delete("/:id", showsControllers.deleteShow);
 showsRouter.put("/:id", showSchemaPUT, showsControllers.editShow);
 showsRouter.post("/", showSchema, showsControllers.addShow);
