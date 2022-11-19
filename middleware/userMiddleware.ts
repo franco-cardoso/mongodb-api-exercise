@@ -9,7 +9,7 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
     authService
         .decodeToken(token)
         .then((result) => {
-            res.locals.currentUser = result;
+            res.locals.currentUser = result.data;
             next();
         })
         .catch((rejected) => {

@@ -1,6 +1,6 @@
 import jwt from "jwt-simple";
 import { DateTime } from "luxon";
-import { UserType } from "../misc/types";
+import { ServiceResponse, UserType } from "../misc/types";
 
 const createToken = (user: UserType): string => {
     const payload = {
@@ -11,7 +11,7 @@ const createToken = (user: UserType): string => {
     return jwt.encode(payload, process.env.SECRET_KEY as string);
 };
 
-const decodeToken = (token: string): Promise<string | { status: number; message: string }> => {
+const decodeToken = (token: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             const payload = jwt.decode(token, process.env.SECRET_KEY as string);
@@ -19,7 +19,7 @@ const decodeToken = (token: string): Promise<string | { status: number; message:
             if (payload.exp < DateTime.now().toMillis()) {
                 return rej({ status: 401, message: "La sesión ha expirado" });
             }
-            return res(payload.sub);
+            return res({ message: "", status: 200, data: payload.sub });
         } catch (err) {
             rej({ status: 500, message: "Invalid token" });
         }
