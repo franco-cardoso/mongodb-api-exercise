@@ -9,14 +9,14 @@ import { showsService } from "../services";
 const getShows = async (req: Request, res: Response) => {
     await showsService
         .getShowsBySearch(req.query.search as string)
-        .then((result) => res.status(result.status).json(result.data))
+        .then((result) => res.status(result.status).json(result))
         .catch((rej) => res.status(rej.status).send(rej));
 };
 
 const getShow = async (req: Request, res: Response) => {
-    // el query param 'episodes' se usa para elegir si se quieren
-    // recibir los detalles del show, o sus episodios
-    if (req.query.episodes) {
+    // si existe el query param "?episodes", se envia
+    // una lista de los episodios del show
+    if ("episodes" in req.query) {
         await showsService
             .getEpisodesByShowID(req.params.id)
             .then((result) => res.status(result.status).send(result))
