@@ -17,11 +17,11 @@ const decodeToken = (token: string): Promise<ServiceResponse> => {
             const payload = jwt.decode(token, process.env.SECRET_KEY as string);
 
             if (payload.exp < DateTime.now().toMillis()) {
-                return rej({ status: 401, message: "La sesión ha expirado" });
+                return rej({ status: 403, message: "La sesión ha expirado" });
             }
             return res({ message: "", status: 200, data: payload.sub });
         } catch (err) {
-            rej({ status: 500, message: "Invalid token" });
+            rej({ status: 401, message: "Invalid token" });
         }
     });
 };
