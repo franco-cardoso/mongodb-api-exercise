@@ -22,7 +22,7 @@ const getShowsBySearch = (search: string | undefined): Promise<ServiceResponse> 
                 }
             );
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
@@ -36,7 +36,7 @@ const getShowByID = (id: string): Promise<ServiceResponse> => {
                 res({ message: "", status: 200, data: show });
             });
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
@@ -57,7 +57,7 @@ const deleteShowByID = (id: string): Promise<ServiceResponse> => {
                 });
             });
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
@@ -87,7 +87,7 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<ServiceRe
                 }
             );
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
@@ -106,7 +106,7 @@ const createNewShow = (data: ShowType): Promise<ServiceResponse> => {
                 });
             });
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
@@ -130,15 +130,12 @@ const getEpisodesByShowID = (id: string): Promise<ServiceResponse> => {
                 );
             });
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
 
-const createNewEpisode = (
-    data: EpisodeType,
-    targetShow: string
-): Promise<ServiceResponse> => {
+const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
             Show.findOne({ _id: targetShow }, {}, (err, show: HydratedDocument<ShowType>) => {
@@ -156,7 +153,7 @@ const createNewEpisode = (
                 });
             });
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
@@ -185,7 +182,7 @@ const deleteEpisodeByID = (id: string, showID: string): Promise<ServiceResponse>
                 });
             });
         } catch (err) {
-            rej({ message: "Error al consultar la base de datos", status: 500 });
+            rej({ message: "Error al consultar la base de datos", status: 500, error: err });
         }
     });
 };
