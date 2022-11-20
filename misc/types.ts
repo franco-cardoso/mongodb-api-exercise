@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 // las keys estan tipadas a 'string'
 // porque typescript no me dejaba indexar
-// objetos de estos tipo usando strings
+// objetos de estos tipos usando strings
 type UserType = {
     [key: string]: any;
     _id?: Types.ObjectId | string;

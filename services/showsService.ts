@@ -1,4 +1,4 @@
-import { CallbackError, HydratedDocument, InferSchemaType, Model, Types } from "mongoose";
+import { CallbackError, HydratedDocument, Types } from "mongoose";
 import { EpisodeType, ServiceResponse, ShowType } from "../misc/types";
 import Episode from "../models/Episode";
 import Show from "../models/Show";
