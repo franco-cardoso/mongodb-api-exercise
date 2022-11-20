@@ -46,4 +46,5 @@ const handleLoginCredentials = (req: Request, res: Response, next: NextFunction)
     next();
 };
 
+
 export default { isAuth, handleLoginCredentials };
