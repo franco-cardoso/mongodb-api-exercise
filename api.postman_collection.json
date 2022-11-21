@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\":\"test\",\r\n    \"email\":\"test@email.com\",\r\n    \"password\":\"12345AsdAsd\"\r\n}",
+					"raw": "{\r\n    \"username\":\"test\",\r\n    \"email\":\"test@email.com\",\r\n    \"password\":\"12345Test\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -46,7 +46,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"userHandle\":\"test\",\r\n    \"password\":\"12345AsdAsd\"\r\n}",
+					"raw": "{\r\n    \"userHandle\":\"test\",\r\n    \"password\":\"12345Test\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -79,7 +79,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\":\"Bocchi the Rockasd!\",\r\n    \"description\":\"Hitori es una chica muy introvertida e incapaz de relacionarse socialmente. Sin embargo, ama la música y su sueño es formar una banda y ser famosa. Un día, mientras iba con su guitarra, se encuentra con una chica que necesita una guitarrista para tocar urgentemente en una banda. A partir de aquí, Hitori tendrá que superar sus miedos para poder alcanzar su sueño.\",\r\n    \"coverImg\":\"https://www.animecovers.com/\",\r\n    \"type\":\"Anime\",\r\n    \"categories\":[\"Comedia\",\"Música\",\"Recuentos de la Vida\"]\r\n}",
+					"raw": "{\r\n    \"title\":\"Bocchi the Rock!\",\r\n    \"description\":\"Hitori es una chica muy introvertida e incapaz de relacionarse socialmente. Sin embargo, ama la música y su sueño es formar una banda y ser famosa. Un día, mientras iba con su guitarra, se encuentra con una chica que necesita una guitarrista para tocar urgentemente en una banda. A partir de aquí, Hitori tendrá que superar sus miedos para poder alcanzar su sueño.\",\r\n    \"coverImg\":\"https://www.animecovers.com/\",\r\n    \"type\":\"Anime\",\r\n    \"categories\":[\"Comedia\",\"Música\",\"Recuentos de la Vida\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -250,7 +250,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer ",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MzdjMGM3ZjhmYzQ3NzYyYjNlMTcwMmIiLCJpYXQiOjE2NjkwNzQ0OTE1NTksImV4cCI6MTY3MTY2NjQ5MTU1OX0.fPqmqcoqTkGFxLf83X7zQw2RfZE6CcwzWYiJXxulWZM",
 						"type": "text"
 					}
 				],

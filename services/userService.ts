@@ -14,14 +14,14 @@ const createUser = (userData: UserType): Promise<ServiceResponse> => {
                 {},
                 (err, user: HydratedDocument<UserType>) => {
                     if (err) throw err;
-                    if (user.email === userData.email) {
+                    if (user && user.email === userData.email) {
                         return rej({
                             message: "Este correo ya se encuentra en uso",
                             at: "email",
                             status: 400,
                         });
                     }
-                    if (user.username === userData.username) {
+                    if (user && user.username === userData.username) {
                         return rej({
                             message: "Este nombre de usuario ya se encuentra en uso",
                             at: "username",
@@ -33,7 +33,7 @@ const createUser = (userData: UserType): Promise<ServiceResponse> => {
                         if (err) throw err;
                         res({
                             message: "Usuario creado con éxito",
-                            data: authService.createToken(userData),
+                            data: { token: authService.createToken(userData) },
                             status: 200,
                         });
                     });
@@ -53,24 +53,30 @@ const attemptLogin = (credentials: {
     const { password } = credentials;
 
     return new Promise((res, rej) => {
-        // prettier-ignore
-        try{
+        try {
             User.findOne(
-            {[Object.keys(credentials)[0]]: Object.values(credentials)[0]},    // usa la primera propiedad de 'credentials' sin saber                                         
-            {},(err, user: HydratedDocument<UserType>) => {                    // su nombre, ya que podria ser 'email' o 'username'
-                if (err) throw err;
-                if (!user) {
-                    return rej({ message: "Datos incorrectos", status: 400 });
+                // usa la primera propiedad de 'credentials' sin saber
+                // su nombre, ya que podria ser 'email' o 'username'
+                { [Object.keys(credentials)[0]]: Object.values(credentials)[0] },
+                {},
+                (err, user: HydratedDocument<UserType>) => {
+                    if (err) throw err;
+                    if (!user) {
+                        return rej({ message: "Datos incorrectos", status: 400 });
+                    }
+                    if (!compareSync(password, user.password)) {
+                        return rej({ message: "Datos incorrectos", status: 400 });
+                    }
+
+                    res({
+                        message: "Iniciado sesión con exito",
+                        status: 200,
+                        data: { token: authService.createToken(user) },
+                    });
                 }
-                if (!compareSync(password, user.password)) {
-                    return rej({ message: "Datos incorrectos", status: 400 });
-                }
-                
-                res({ message: "Iniciado sesión con exito", status: 200, data: authService.createToken(user) });
-            }
             );
         } catch (err) {
-            rej({ message:"Ocurrió un error al iniciar sesión", status: 500, error: err })
+            rej({ message: "Ocurrió un error al iniciar sesión", status: 500, error: err });
         }
     });
 };
@@ -83,14 +89,19 @@ const addFav = (userId: string, showId: string): Promise<ServiceResponse> => {
                 if (!user) return rej({ message: "Este usuario no existe", status: 404 });
 
                 const idToAdd = new Types.ObjectId(showId);
+                const isFav = user.favorites.includes(idToAdd);
                 user.updateOne(
                     // si la ID existe en la lista de favoritos usa $pull para eliminarla
                     // si no, usa $push para añadirla
-                    { [user.favorites.includes(idToAdd) ? "$pull" : "$push"]: { favorites: idToAdd } },
+                    { [isFav ? "$pull" : "$push"]: { favorites: idToAdd } },
                     {},
                     (err) => {
                         if (err) throw err;
-                        res({ message: "Show añadido a favoritos", status: 200 });
+
+                        res({
+                            message: isFav ? "Show removido de favoritos" : "Show añadido a favoritos",
+                            status: 200,
+                        });
                     }
                 );
             });

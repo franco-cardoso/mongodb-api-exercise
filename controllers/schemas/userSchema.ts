@@ -7,9 +7,9 @@ export default [
         .notEmpty()
         .withMessage("Debes ingresar un nombre de usuario")
         .isAlphanumeric()
-        .withMessage("Tu nombre debe contener entre 3 y 16 caracteres alfanuméricos")
+        .withMessage("Tu nombre debe contener solo caracteres alfanuméricos")
         .isLength({min:3,max:16})
-        .withMessage("Tu nombre debe contener entre 3 y 16 caracteres alfanuméricos")
+        .withMessage("Tu nombre debe ser entre 3 y 16 caracteres de largo")
 
         ,
 

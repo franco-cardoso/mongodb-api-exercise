@@ -18,7 +18,11 @@ const getShowsBySearch = (search: string | undefined): Promise<ServiceResponse> 
                 "title description coverImg",
                 (err, shows: HydratedDocument<ShowType>[]) => {
                     if (err) throw err;
-                    res({ message: "", status: 200, data: shows });
+                    res({
+                        message: "",
+                        status: 200,
+                        data: { result: shows },
+                    });
                 }
             );
         } catch (err) {
@@ -33,7 +37,11 @@ const getShowByID = (id: string): Promise<ServiceResponse> => {
             Show.findById(id, "title description coverImg type category", (err, show: HydratedDocument<ShowType>) => {
                 if (err) throw err;
                 if (!show) rej({ message: "Este show no existe", status: 404 });
-                res({ message: "", status: 200, data: show });
+                res({
+                    message: "",
+                    status: 200,
+                    data: { show: show },
+                });
             });
         } catch (err) {
             rej({ message: "Error al consultar la base de datos", status: 500, error: err });
@@ -53,7 +61,10 @@ const deleteShowByID = (id: string): Promise<ServiceResponse> => {
                 Episode.deleteMany({ _id: { $in: show.episodes } }, {}, (err) => {
                     if (err) throw err;
                     show.deleteOne();
-                    res({ message: "Show eliminado con éxito", status: 200 });
+                    res({
+                        message: "Show eliminado con éxito",
+                        status: 200,
+                    });
                 });
             });
         } catch (err) {
@@ -83,7 +94,10 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<ServiceRe
                     if (err) throw err;
                     if (!show) rej({ message: "Esta entrada no existe", status: 404 });
 
-                    res({ message: "Entrada editada con éxito", status: 200 });
+                    res({
+                        message: "Entrada editada con éxito",
+                        status: 200,
+                    });
                 }
             );
         } catch (err) {
@@ -102,7 +116,11 @@ const createNewShow = (data: ShowType): Promise<ServiceResponse> => {
                 const newShow = new Show(data);
                 newShow.save((err, savedShow: HydratedDocument<ShowType>) => {
                     if (err) throw err;
-                    res({ message: "Show creado con exito", data: savedShow._id, status: 201 });
+                    res({
+                        message: "Show creado con exito",
+                        data: { ID: savedShow._id },
+                        status: 201,
+                    });
                 });
             });
         } catch (err) {
@@ -125,7 +143,12 @@ const getEpisodesByShowID = (id: string): Promise<ServiceResponse> => {
                     "title description",
                     (err, episodes: HydratedDocument<EpisodeType>[]) => {
                         if (err) throw err;
-                        res({ message: "", status: 200, data: episodes });
+
+                        res({
+                            message: "",
+                            status: 200,
+                            data: { episodes: episodes },
+                        });
                     }
                 );
             });
@@ -148,7 +171,11 @@ const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<Servic
 
                     show.updateOne({ $push: { episodes: episode._id } }, {}, (err) => {
                         if (err) throw err;
-                        res({ message: "Episodio añadido con éxito", data: episode._id, status: 201 });
+                        res({
+                            message: "Episodio añadido con éxito",
+                            data: { ID: episode._id },
+                            status: 201,
+                        });
                     });
                 });
             });
@@ -177,7 +204,10 @@ const deleteEpisodeByID = (id: string, showID: string): Promise<ServiceResponse>
                     show.updateOne({ $pull: { episodes: new Types.ObjectId(episode._id) } }, {}, (err) => {
                         if (err) throw err;
                         episode.deleteOne();
-                        res({ message: "Episodio eliminado con éxito", status: 200 });
+                        res({
+                            message: "Episodio eliminado con éxito",
+                            status: 200,
+                        });
                     });
                 });
             });
