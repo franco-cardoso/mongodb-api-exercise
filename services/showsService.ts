@@ -16,7 +16,7 @@ const getShowsBySearch = (search: string | undefined): Promise<ServiceResponse> 
             Show.find(
                 searchQuery ? { title: { $regex: searchQuery } } : {},
                 "title description coverImg",
-                (err, shows: HydratedDocument<ShowType>[]) => {
+                (err: CallbackError, shows: HydratedDocument<ShowType>[]) => {
                     if (err) throw err;
                     res({
                         message: "",
@@ -34,7 +34,7 @@ const getShowsBySearch = (search: string | undefined): Promise<ServiceResponse> 
 const getShowByID = (id: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
-            Show.findById(id, "title description coverImg type category", (err, show: HydratedDocument<ShowType>) => {
+            Show.findById(id, "title description coverImg type category", (err: CallbackError, show: HydratedDocument<ShowType>) => {
                 if (err) throw err;
                 if (!show) rej({ message: "Este show no existe", status: 404 });
                 res({
@@ -52,13 +52,13 @@ const getShowByID = (id: string): Promise<ServiceResponse> => {
 const deleteShowByID = (id: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
-            Show.findById(id, {}, (err, show: HydratedDocument<ShowType>) => {
+            Show.findById(id, {}, (err: CallbackError, show: HydratedDocument<ShowType>) => {
                 if (err) throw err;
                 if (!show) return rej({ message: "Este show no existe", status: 404 });
 
                 // elimina todos los episodios que se encuentren
                 // dentro del array 'episodes', y elimina el show
-                Episode.deleteMany({ _id: { $in: show.episodes } }, {}, (err) => {
+                Episode.deleteMany({ _id: { $in: show.episodes } }, {}, (err: CallbackError) => {
                     if (err) throw err;
                     show.deleteOne();
                     res({
@@ -109,12 +109,12 @@ const editEntry = (id: string, model: string, data: ShowType): Promise<ServiceRe
 const createNewShow = (data: ShowType): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
-            Show.findOne({ title: data.title }, {}, (err, show: HydratedDocument<ShowType>) => {
+            Show.findOne({ title: data.title }, {}, (err: CallbackError, show: HydratedDocument<ShowType>) => {
                 if (err) throw err;
                 if (show) return rej({ message: "Ya existe un show con este título", status: 409 });
 
                 const newShow = new Show(data);
-                newShow.save((err, savedShow: HydratedDocument<ShowType>) => {
+                newShow.save((err: CallbackError, savedShow: HydratedDocument<ShowType>) => {
                     if (err) throw err;
                     res({
                         message: "Show creado con exito",
@@ -136,12 +136,12 @@ const createNewShow = (data: ShowType): Promise<ServiceResponse> => {
 const getEpisodesByShowID = (id: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
-            Show.findById(id, "episodes", (err, episodesArr: HydratedDocument<{ episodes: Types.ObjectId[] }>) => {
+            Show.findById(id, "episodes", (err: CallbackError, episodesArr: HydratedDocument<{ episodes: Types.ObjectId[] }>) => {
                 if (err) throw err;
                 Episode.find(
                     { _id: { $in: episodesArr.episodes } },
                     "title description",
-                    (err, episodes: HydratedDocument<EpisodeType>[]) => {
+                    (err: CallbackError, episodes: HydratedDocument<EpisodeType>[]) => {
                         if (err) throw err;
 
                         res({
@@ -161,15 +161,15 @@ const getEpisodesByShowID = (id: string): Promise<ServiceResponse> => {
 const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
-            Show.findOne({ _id: targetShow }, {}, (err, show: HydratedDocument<ShowType>) => {
+            Show.findOne({ _id: targetShow }, {}, (err: CallbackError, show: HydratedDocument<ShowType>) => {
                 if (err) throw err;
                 if (!show) return rej({ message: "Este show no existe", status: 404 });
 
                 const newEpisode = new Episode(data);
-                newEpisode.save((err, episode: HydratedDocument<EpisodeType>) => {
+                newEpisode.save((err: CallbackError, episode: HydratedDocument<EpisodeType>) => {
                     if (err) throw err;
 
-                    show.updateOne({ $push: { episodes: episode._id } }, {}, (err) => {
+                    show.updateOne({ $push: { episodes: episode._id } }, {}, (err: CallbackError) => {
                         if (err) throw err;
                         res({
                             message: "Episodio añadido con éxito",
@@ -188,20 +188,20 @@ const createNewEpisode = (data: EpisodeType, targetShow: string): Promise<Servic
 const deleteEpisodeByID = (id: string, showID: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
-            Episode.findById(id, {}, (err, episode: HydratedDocument<EpisodeType>) => {
+            Episode.findById(id, {}, (err: CallbackError, episode: HydratedDocument<EpisodeType>) => {
                 if (err) throw err;
                 if (!episode) return rej({ message: "Este episodio no existe", status: 404 });
 
                 // encuentra el show correspondiente y elimina el episodio de su array
                 // antes de eliminar el episodio en cuestión
-                Show.findById(showID, {}, (err, show: HydratedDocument<ShowType>) => {
+                Show.findById(showID, {}, (err: CallbackError, show: HydratedDocument<ShowType>) => {
                     if (err) throw err;
                     if (!show) return rej({ message: "Este show no existe", status: 404 });
                     if (!show.episodes.includes(new Types.ObjectId(id))) {
                         return rej({ message: "Este episodio no existe en este show", status: 404 });
                     }
 
-                    show.updateOne({ $pull: { episodes: new Types.ObjectId(episode._id) } }, {}, (err) => {
+                    show.updateOne({ $pull: { episodes: new Types.ObjectId(episode._id) } }, {}, (err: CallbackError) => {
                         if (err) throw err;
                         episode.deleteOne();
                         res({

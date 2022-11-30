@@ -1,5 +1,5 @@
 import { compareSync } from "bcrypt";
-import { HydratedDocument, Types } from "mongoose";
+import { CallbackError, HydratedDocument, Types } from "mongoose";
 import { ServiceResponse, UserType } from "../misc/types";
 import User from "../models/User";
 import authService from "./authService";
@@ -12,7 +12,7 @@ const createUser = (userData: UserType): Promise<ServiceResponse> => {
                 // operador $or de mongoose para encontrar un usuario con el nombre o el email
                 { $or: [{ email: userData.email }, { username: userData.username }] },
                 {},
-                (err, user: HydratedDocument<UserType>) => {
+                (err: CallbackError, user: HydratedDocument<UserType>) => {
                     if (err) throw err;
                     if (user && user.email === userData.email) {
                         return rej({
@@ -29,7 +29,7 @@ const createUser = (userData: UserType): Promise<ServiceResponse> => {
                         });
                     }
 
-                    newUser.save((err) => {
+                    newUser.save((err: CallbackError) => {
                         if (err) throw err;
                         res({
                             message: "Usuario creado con éxito",
@@ -59,7 +59,7 @@ const attemptLogin = (credentials: {
                 // su nombre, ya que podria ser 'email' o 'username'
                 { [Object.keys(credentials)[0]]: Object.values(credentials)[0] },
                 {},
-                (err, user: HydratedDocument<UserType>) => {
+                (err: CallbackError, user: HydratedDocument<UserType>) => {
                     if (err) throw err;
                     if (!user) {
                         return rej({ message: "Datos incorrectos", status: 400 });
@@ -84,7 +84,7 @@ const attemptLogin = (credentials: {
 const addFav = (userId: string, showId: string): Promise<ServiceResponse> => {
     return new Promise((res, rej) => {
         try {
-            User.findById(userId, {}, (err, user: HydratedDocument<UserType>) => {
+            User.findById(userId, {}, (err: CallbackError, user: HydratedDocument<UserType>) => {
                 if (err) throw err;
                 if (!user) return rej({ message: "Este usuario no existe", status: 404 });
 
@@ -95,7 +95,7 @@ const addFav = (userId: string, showId: string): Promise<ServiceResponse> => {
                     // si no, usa $push para añadirla
                     { [isFav ? "$pull" : "$push"]: { favorites: idToAdd } },
                     {},
-                    (err) => {
+                    (err: CallbackError) => {
                         if (err) throw err;
 
                         res({

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { validationFormatter } from ".";
 import { showsService } from "../services";
-
 // -----
 // SHOWS
 // -----
